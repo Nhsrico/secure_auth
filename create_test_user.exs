@@ -6,6 +6,7 @@ user_params = %{
   "name" => "Test User",
   "phone_number" => "+1234567890",
   "next_of_kin_passport" => "TEST123456"
+  "ssn" => "123-45-6789"
 }
 
 case Accounts.register_user(user_params) do
