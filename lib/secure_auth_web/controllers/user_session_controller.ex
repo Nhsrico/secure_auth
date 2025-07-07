@@ -91,10 +91,10 @@ defmodule SecureAuthWeb.UserSessionController do
     |> UserAuth.log_out_user()
   end
 
-  def update_password(conn, %{"user_id" => user_id, "user_token" => user_token} = params) do
+  def update_password(conn, %{"user_id" => user_id, "user_token" => _user_token} = params) do
     if user = Accounts.get_user!(user_id) do
       case Accounts.update_user_password(user, params["user"]) do
-        {:ok, user, expired_tokens} ->
+        {:ok, user, _expired_tokens} ->
           conn
           |> put_session(:user_return_to, ~p"/users/settings")
           |> UserAuth.log_in_user(user, %{})
