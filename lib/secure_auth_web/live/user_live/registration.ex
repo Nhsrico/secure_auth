@@ -6,7 +6,7 @@ defmodule SecureAuthWeb.UserLive.Registration do
 
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope}>
+    <Layouts.app flash={@flash}>
       <div class="mx-auto max-w-2xl">
         <.header class="text-center mb-8">
           Create Your Secure Account
