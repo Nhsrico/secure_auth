@@ -80,19 +80,19 @@ defmodule SecureAuth.Accounts do
     |> Repo.insert()
   end
 
-\
-  @doc """\
-  Returns an `%Ecto.Changeset{}` for changing the user registration.\
-\
-  ## Examples\
-\
-      iex> change_user_registration(user)\
-      %Ecto.Changeset{data: %User{}}\
-\
-  """\
-  def change_user_registration(user, attrs \\\\ %{}, opts \\\\ []) do\
-    User.registration_changeset(user, attrs, opts)\
+  @doc """
+  Returns an `%Ecto.Changeset{}` for changing the user registration.
+
+  ## Examples
+
+      iex> change_user_registration(user)
+      %Ecto.Changeset{data: %User{}}
+
+  """
+  def change_user_registration(user, attrs \\ %{}, opts \\ []) do
+    User.registration_changeset(user, attrs, opts)
   end
+
   ## Settings
 
   @doc """
