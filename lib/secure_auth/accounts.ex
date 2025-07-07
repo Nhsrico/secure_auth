@@ -347,30 +347,30 @@ defmodule SecureAuth.Accounts do
     end
   end
 
-  @doc """\
-  Gets a user by a specific field.\
-  """\
-  def get_user_by(clauses) do\
-    Repo.get_by(User, clauses)\
-  end\
-\
-  @doc """\
-  Registers a user via OAuth2 provider.\
-  """\
-  def register_oauth_user(attrs) do\
-    %User{}\
-    |> User.oauth_registration_changeset(attrs)\
-    |> Repo.insert()\
-  end\
-\
-  @doc """\
-  Updates a user's OAuth2 information.\
-  """\
-  def update_user_oauth(user, attrs) do\
-    user\
-    |> User.oauth_update_changeset(attrs)\
-    |> Repo.update()\
-  end\
+  @doc """
+  Gets a user by a specific field.
+  """
+  def get_user_by(clauses) do
+    Repo.get_by(User, clauses)
+  end
+
+  @doc """
+  Registers a user via OAuth2 provider.
+  """
+  def register_oauth_user(attrs) do
+    %User{}
+    |> User.oauth_registration_changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a user's OAuth2 information.
+  """
+  def update_user_oauth(user, attrs) do
+    user
+    |> User.oauth_update_changeset(attrs)
+    |> Repo.update()
+  end
 
   defp update_user_and_delete_all_tokens(changeset) do
     %{data: %User{} = user} = changeset
