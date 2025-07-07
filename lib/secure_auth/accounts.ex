@@ -272,7 +272,6 @@ defmodule SecureAuth.Accounts do
 
   ## Examples
 
-      iex> deliver_user_update_email_instructions(user, current_email, fn token -> "/users/settings/confirm-email/#{token}" end)
       {:ok, %{to: ..., body: ...}}
 
   """
