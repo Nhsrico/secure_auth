@@ -25,9 +25,11 @@ defmodule SecureAuthWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", SecureAuthWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", SecureAuthWeb do
+    pipe_through :api
+    get "/test", Api.TestController, :index
+    get "/test/:id", Api.TestController, :show
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:secure_auth, :dev_routes) do
