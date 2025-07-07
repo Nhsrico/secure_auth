@@ -5,7 +5,7 @@ user_params = %{
   "password" => "testpass123456",
   "name" => "Test User",
   "phone_number" => "+1234567890",
-  "next_of_kin_passport" => "TEST123456"
+  "next_of_kin_passport" => "TEST123456",
   "ssn" => "123-45-6789"
 }
 
