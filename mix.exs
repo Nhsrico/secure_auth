@@ -60,7 +60,7 @@ defmodule SecureAuth.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:nimble_totp, "~> 1.0"},
-      {:qr_code, "~> 3.2"},,
+      {:qr_code, "~> 3.2"},
       {:hammer, "~> 7.0"},
       {:hammer_plug, "~> 3.2"}
     ]
