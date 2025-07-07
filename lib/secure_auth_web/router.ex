@@ -2,6 +2,7 @@ defmodule SecureAuthWeb.Router do
   use SecureAuthWeb, :router
 
   import SecureAuthWeb.UserAuth
+  import SecureAuthWeb.Plugs.RateLimitPlug
 
   pipeline :browser do
     plug :accepts, ["html"]
