@@ -1,6 +1,3 @@
-==> nimble_totp
-Compiling 1 file (.ex)
-Generated nimble_totp app
 defmodule SecureAuth.MixProject do
   use Mix.Project
 
@@ -88,5 +85,3 @@ defmodule SecureAuth.MixProject do
     ]
   end
 end
-
-{:nimble_totp, "~> 1.0"}
