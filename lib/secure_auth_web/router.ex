@@ -15,6 +15,7 @@ defmodule SecureAuthWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug SecureAuthWeb.Plugs.ApiAuthPlug, scope: "read"
   end
 
   scope "/", SecureAuthWeb do
