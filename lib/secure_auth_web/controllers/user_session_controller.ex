@@ -1,8 +1,18 @@
 defmodule SecureAuthWeb.UserSessionController do
   use SecureAuthWeb, :controller
 
+  alias SecureAuthWeb.Plugs.RateLimitPlug
+
   alias SecureAuth.Accounts
   alias SecureAuthWeb.UserAuth
+
+  plug RateLimitPlug,
+       [
+         action: :login,
+         message: "Too many login attempts. Please try again in 15 minutes.",
+         redirect_to: "/users/log-in"
+       ]
+       when action in [:create]
 
   def create(conn, %{"_action" => "registered"} = params) do
     create(conn, params, "Account created successfully!")
