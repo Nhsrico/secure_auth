@@ -23,11 +23,22 @@ defmodule SecureAuthWeb.UserLive.TwoFactorSetup do
                 Scan QR Code with Your Authenticator App
               </h3>
               
-    <!-- QR Code -->
+    <!-- Real QR Code -->
               <div class="bg-white p-4 rounded-lg border-2 border-gray-200 inline-block mb-4">
-                <div class="qr-code" phx-hook="QRCode" id="qr-code" data-qr-text={@qr_uri}>
-                  <!-- QR code will be generated here by JavaScript -->
-                </div>
+                <%= if @qr_code_svg do %>
+                  <div class="qr-code-container">
+                    {raw(@qr_code_svg)}
+                  </div>
+                <% else %>
+                  <div class="w-48 h-48 bg-gray-100 border border-gray-300 rounded flex items-center justify-center">
+                    <div class="text-center">
+                      <div class="text-gray-500 mb-2">
+                        <.icon name="hero-qr-code" class="w-12 h-12 mx-auto" />
+                      </div>
+                      <p class="text-sm text-gray-500">Generating QR Code...</p>
+                    </div>
+                  </div>
+                <% end %>
               </div>
               
     <!-- Manual Entry Option -->
@@ -35,9 +46,9 @@ defmodule SecureAuthWeb.UserLive.TwoFactorSetup do
                 <p class="text-sm text-gray-600 mb-2">
                   Can't scan? Enter this code manually:
                 </p>
-                <code class="bg-gray-100 px-3 py-2 rounded text-sm font-mono">
+                <div class="bg-gray-100 px-3 py-2 rounded text-sm font-mono break-all max-w-xs mx-auto">
                   {@totp_secret}
-                </code>
+                </div>
               </div>
               
     <!-- Instructions -->
@@ -133,6 +144,9 @@ defmodule SecureAuthWeb.UserLive.TwoFactorSetup do
       secret = NimbleTOTP.secret()
       qr_uri = NimbleTOTP.otpauth_uri("SecureAuth:#{user.email}", secret, issuer: "SecureAuth")
 
+      # Generate QR code SVG
+      qr_code_svg = generate_qr_code_svg(qr_uri)
+
       changeset = Accounts.change_user_registration(%User{})
 
       {:ok,
@@ -140,6 +154,7 @@ defmodule SecureAuthWeb.UserLive.TwoFactorSetup do
        |> assign(:step, :setup)
        |> assign(:totp_secret, Base.encode32(secret, padding: false))
        |> assign(:qr_uri, qr_uri)
+       |> assign(:qr_code_svg, qr_code_svg)
        |> assign(:raw_secret, secret)
        |> assign(:backup_codes, [])
        |> assign_form(changeset)}
@@ -195,5 +210,22 @@ defmodule SecureAuthWeb.UserLive.TwoFactorSetup do
 
   defp generate_backup_codes do
     for _ <- 1..8, do: :crypto.strong_rand_bytes(4) |> Base.encode16(case: :lower)
+  end
+
+  defp generate_qr_code_svg(qr_uri) do
+    try do
+      qr_uri
+      |> QrCode.create(:high)
+      |> case do
+        {:ok, qr_code} ->
+          qr_code
+          |> QrCode.render(:svg, width: 200)
+
+        {:error, _reason} ->
+          nil
+      end
+    rescue
+      _ -> nil
+    end
   end
 end
