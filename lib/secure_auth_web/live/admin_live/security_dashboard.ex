@@ -584,8 +584,6 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
   def handle_event("switch_tab", %{"tab" => tab}, socket) do
     {:noreply, assign(socket, :active_tab, tab)}
   end
-    {:noreply, assign(socket, :active_tab, tab)}
-  end
 
   def handle_event("refresh_users", _params, socket) do
     {:noreply, load_users(socket)}
