@@ -28,6 +28,20 @@ defmodule SecureAuth.Accounts.User do
     field :backup_codes_encrypted, :binary
     field :totp_last_used_at, :utc_datetime
 
+    # OAuth2 fields
+    field :oauth_providers, :map, default: %{}
+    field :google_id, :string
+    field :github_id, :string
+    field :microsoft_id, :string
+    field :oauth_tokens_encrypted, :binary
+    field :oauth_email_verified, :boolean, default: false
+    field :oauth_avatar_url, :string
+    field :oauth_first_login, :utc_datetime
+    field :oauth_last_login, :utc_datetime
+
+    # Virtual OAuth2 fields
+    field :oauth_tokens, :map, virtual: true, redact: true
+
     # Virtual fields for 2FA
     field :totp_secret, :string, virtual: true, redact: true
     field :backup_codes, {:array, :string}, virtual: true, redact: true
