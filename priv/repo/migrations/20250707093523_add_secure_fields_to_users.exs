@@ -13,4 +13,5 @@ defmodule SecureAuth.Repo.Migrations.AddSecureFieldsToUsers do
 
     create index(:users, [:phone_number])
     create index(:users, [:verification_status])
-
+  end
+end
