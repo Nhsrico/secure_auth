@@ -58,6 +58,7 @@ defmodule SecureAuthWeb.Router do
       live "/users/two-factor-setup", UserLive.TwoFactorSetup, :new
       live "/dashboard", UserLive.Dashboard, :index
       live "/admin/security", AdminLive.SecurityDashboard, :index
+      live "/api-keys", ApiKeysLive.Index, :index
     end
 
     post "/users/update-password", UserSessionController, :update_password
