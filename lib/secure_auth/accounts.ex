@@ -4,6 +4,7 @@ defmodule SecureAuth.Accounts do
   """
 
   import Ecto.Query, warn: false
+  import Ecto.Changeset
   alias SecureAuth.Repo
 
   alias SecureAuth.Accounts.{User, UserToken, UserNotifier}
