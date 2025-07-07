@@ -1,21 +1,3 @@
-==> ueberauth
-Compiling 9 files (.ex)
-Generated ueberauth app
-==> tesla
-Compiling 40 files (.ex)
-Generated tesla app
-==> oauth2
-Compiling 13 files (.ex)
-Generated oauth2 app
-==> ueberauth_google
-Compiling 3 files (.ex)
-Generated ueberauth_google app
-==> ueberauth_github
-Compiling 3 files (.ex)
-Generated ueberauth_github app
-==> ueberauth_microsoft
-Compiling 3 files (.ex)
-Generated ueberauth_microsoft app
 defmodule SecureAuth.MixProject do
   use Mix.Project
 
