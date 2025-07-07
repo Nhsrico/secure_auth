@@ -38,6 +38,7 @@ defmodule SecureAuth.MixProject do
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
       {:ecto_sqlite3, ">= 0.0.0"},
+      {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.0.9"},
@@ -65,9 +66,6 @@ defmodule SecureAuth.MixProject do
       {:ueberauth_google, "~> 0.12"},
       {:ueberauth_github, "~> 0.8"},
       {:ueberauth_microsoft, "~> 0.14"}
-      # Removed hammer and hammer_plug for now to fix dependency issues
-      # {:hammer, "~> 7.0"},
-      # {:hammer_plug, "~> 3.2"}
     ]
   end
 
