@@ -227,7 +227,7 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
        |> assign(:metrics, get_security_metrics())
        |> assign(:users, get_recent_users())
        |> assign(:rate_limited_ips, get_rate_limited_ips())
-       |> schedule_refresh}
+       |> schedule_refresh()}
     else
       {:ok,
        socket
@@ -291,7 +291,7 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
      socket
      |> assign(:metrics, get_security_metrics())
      |> assign(:rate_limited_ips, get_rate_limited_ips())
-     |> schedule_refresh}
+     |> schedule_refresh()}
   end
 
   # Private functions
@@ -396,8 +396,9 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
     }
   end
 
-  defp schedule_refresh do
+  defp schedule_refresh(socket) do
     # Refresh every 30 seconds
     Process.send_after(self(), :refresh, 30_000)
+    socket
   end
 end
