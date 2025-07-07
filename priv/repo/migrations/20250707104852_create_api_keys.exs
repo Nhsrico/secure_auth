@@ -22,7 +22,6 @@ defmodule SecureAuth.Repo.Migrations.CreateApiKeys do
     end
 
     create index(:api_keys, [:user_id])
-    create index(:api_keys, [:key_hash])
     create index(:api_keys, [:key_prefix])
     create index(:api_keys, [:scope])
     create index(:api_keys, [:is_active])
