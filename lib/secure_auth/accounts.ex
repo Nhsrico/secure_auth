@@ -151,6 +151,37 @@ defmodule SecureAuth.Accounts do
   end
 
   @doc """
+  Returns an `%Ecto.Changeset{}` for changing the user phone number.
+
+  ## Examples
+
+      iex> change_user_phone(user)
+      %Ecto.Changeset{}}
+
+  """
+  def change_user_phone(user, attrs \\ %{}) do
+    User.phone_changeset(user, attrs)
+  end
+
+  @doc """
+  Updates the user phone number.
+
+  ## Examples
+
+      iex> update_user_phone(user, %{phone_number: "+1234567890"})
+      {:ok, %User{}}
+
+      iex> update_user_phone(user, %{phone_number: "invalid"})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_phone(user, attrs) do
+    user
+    |> User.phone_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for changing the user password.
 
   See `SecureAuth.Accounts.User.password_changeset/3` for a list of supported options.
@@ -158,7 +189,7 @@ defmodule SecureAuth.Accounts do
   ## Examples
 
       iex> change_user_password(user)
-      %Ecto.Changeset{data: %User{}}
+      %Ecto.ChangUser{}}
 
   """
   def change_user_password(user, attrs \\ %{}, opts \\ []) do
