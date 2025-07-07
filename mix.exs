@@ -1,3 +1,21 @@
+==> ueberauth
+Compiling 9 files (.ex)
+Generated ueberauth app
+==> tesla
+Compiling 40 files (.ex)
+Generated tesla app
+==> oauth2
+Compiling 13 files (.ex)
+Generated oauth2 app
+==> ueberauth_google
+Compiling 3 files (.ex)
+Generated ueberauth_google app
+==> ueberauth_github
+Compiling 3 files (.ex)
+Generated ueberauth_github app
+==> ueberauth_microsoft
+Compiling 3 files (.ex)
+Generated ueberauth_microsoft app
 defmodule SecureAuth.MixProject do
   use Mix.Project
 
@@ -60,7 +78,11 @@ defmodule SecureAuth.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:nimble_totp, "~> 1.0"},
-      {:qr_code, "~> 3.2"}
+      {:qr_code, "~> 3.2"},
+      {:ueberauth, "~> 0.10"},
+      {:ueberauth_google, "~> 0.12"},
+      {:ueberauth_github, "~> 0.8"},
+      {:ueberauth_microsoft, "~> 0.14"}
       # Removed hammer and hammer_plug for now to fix dependency issues
       # {:hammer, "~> 7.0"},
       # {:hammer_plug, "~> 3.2"}
