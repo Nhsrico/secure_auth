@@ -7,6 +7,19 @@
 # General application configuration
 import Config
 
+config :secure_auth, :scopes,
+  user: [
+    default: true,
+    module: SecureAuth.Accounts.Scope,
+    assign_key: :current_scope,
+    access_path: [:user, :id],
+    schema_key: :user_id,
+    schema_type: :id,
+    schema_table: :users,
+    test_data_fixture: SecureAuth.AccountsFixtures,
+    test_login_helper: :register_and_log_in_user
+  ]
+
 config :secure_auth,
   ecto_repos: [SecureAuth.Repo],
   generators: [timestamp_type: :utc_datetime]
@@ -21,6 +34,43 @@ config :secure_auth, SecureAuthWeb.Endpoint,
   ],
   pubsub_server: SecureAuth.PubSub,
   live_view: [signing_salt: "qgd2K15U"]
+
+# OAuth2 Configuration
+# Note: These are placeholder values for development
+# In production, set these via environment variables
+config :ueberauth, Ueberauth,
+  providers: [
+    google:
+      {Ueberauth.Strategy.Google,
+       [
+         default_scope: "email profile",
+         prompt: "consent",
+         access_type: "offline"
+       ]},
+    github:
+      {Ueberauth.Strategy.Github,
+       [
+         default_scope: "user:email"
+       ]},
+    microsoft:
+      {Ueberauth.Strategy.Microsoft,
+       [
+         default_scope: "https://graph.microsoft.com/user.read"
+       ]}
+  ]
+
+config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+  client_id: System.get_env("GOOGLE_CLIENT_ID", "your-google-client-id"),
+  client_secret: System.get_env("GOOGLE_CLIENT_SECRET", "your-google-client-secret")
+
+config :ueberauth, Ueberauth.Strategy.Github.OAuth,
+  client_id: System.get_env("GITHUB_CLIENT_ID", "your-github-client-id"),
+  client_secret: System.get_env("GITHUB_CLIENT_SECRET", "your-github-client-secret")
+
+config :ueberauth, Ueberauth.Strategy.Microsoft.OAuth,
+  client_id: System.get_env("MICROSOFT_CLIENT_ID", "your-microsoft-client-id"),
+  client_secret: System.get_env("MICROSOFT_CLIENT_SECRET", "your-microsoft-client-secret"),
+  tenant_id: System.get_env("MICROSOFT_TENANT_ID", "common")
 
 # Configures the mailer
 #
