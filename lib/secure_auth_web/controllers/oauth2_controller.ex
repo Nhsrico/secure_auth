@@ -5,7 +5,7 @@ defmodule SecureAuthWeb.OAuth2Controller do
   alias SecureAuthWeb.UserAuth
 
   def request(conn, %{"provider" => provider}) do
-    redirect(conn, external: Ueberauth.Strategy.helpers(conn).request_url(provider))
+    redirect(conn, to: "/auth/#{provider}")
   end
 
   def callback(conn, %{"provider" => provider} = params) do
