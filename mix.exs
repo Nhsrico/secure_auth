@@ -1,3 +1,6 @@
+==> nimble_totp
+Compiling 1 file (.ex)
+Generated nimble_totp app
 defmodule SecureAuth.MixProject do
   use Mix.Project
 
@@ -33,6 +36,7 @@ defmodule SecureAuth.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.8.0-rc.3", override: true},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
@@ -57,7 +61,8 @@ defmodule SecureAuth.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:nimble_totp, "~> 1.0"}
     ]
   end
 
@@ -83,3 +88,5 @@ defmodule SecureAuth.MixProject do
     ]
   end
 end
+
+{:nimble_totp, "~> 1.0"}
