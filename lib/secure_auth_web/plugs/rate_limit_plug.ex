@@ -49,7 +49,8 @@ defmodule SecureAuthWeb.Plugs.RateLimitPlug do
   end
 
   defp get_client_peer_data(conn) do
-    conn.peer_data || %{address: {127, 0, 0, 1}}
+    # Use remote_ip which is always available in Plug.Conn
+    %{address: conn.remote_ip}
   end
 
   defp handle_rate_limited(conn, message, nil) do
