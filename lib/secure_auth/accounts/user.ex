@@ -109,17 +109,17 @@ defmodule SecureAuth.Accounts.User do
       validations on a LiveView form), this option can be set to `false`.
       Defaults to `true`.
   """
-  @doc """\
-  A user changeset for changing the phone number.\
-  """\
-  def phone_changeset(user, attrs) do\
-    user\
-    |> cast(attrs, [:phone_number])\
-    |> validate_required([:phone_number])\
-    |> validate_format(:phone_number, ~r/^\\+?[1-9]\\d{1,14}$/,\
-      message: "must be a valid phone number"\
-    )\
-  end\
+  @doc """
+  A user changeset for changing the phone number.
+  """
+  def phone_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:phone_number])
+    |> validate_required([:phone_number])
+    |> validate_format(:phone_number, ~r/^\+?[1-9]\d{1,14}$/,
+      message: "must be a valid phone number"
+    )
+  end
 
   def password_changeset(user, attrs, opts \\ []) do
     user
