@@ -14,9 +14,3 @@ defmodule SecureAuth.Repo.Migrations.AddSecureFieldsToUsers do
     create index(:users, [:phone_number])
     create index(:users, [:verification_status])
 
-    # Add constraint to ensure either SSN or passport is provided
-    create constraint(:users, :ssn_or_passport_required,
-             check: "ssn_encrypted IS NOT NULL OR passport_number_encrypted IS NOT NULL"
-           )
-  end
-end
