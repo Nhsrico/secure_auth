@@ -231,7 +231,7 @@ defmodule SecureAuthWeb.UserLive.Login do
      |> assign(:pending_user, nil)
      |> assign(:show_backup_form, false)
      |> assign_form(form)
-     |> assign(:magic_link_form, to_form(%{}, as: "user"))
+     |> assign(:magic_link_form, to_form(%{}, as: "magic_link"))
      |> assign_totp_form()
      |> assign_backup_form(), temporary_assigns: [form: form]}
   end
