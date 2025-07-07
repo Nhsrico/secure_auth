@@ -79,5 +79,7 @@ defmodule SecureAuthWeb.Router do
 
     post "/users/log-in", UserSessionController, :create
     delete "/users/log-out", UserSessionController, :delete
+    get "/auth/:provider", OAuth2Controller, :request
+    get "/auth/:provider/callback", OAuth2Controller, :callback
   end
 end
