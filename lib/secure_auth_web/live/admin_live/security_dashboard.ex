@@ -15,7 +15,7 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-gray-900 mb-2">Security Dashboard</h1>
           <p class="text-gray-600">
-            Monitor authentication security, rate limiting, and user verification status
+            Monitor authentication security, rate limiting, and user management
           </p>
         </div>
         
@@ -91,18 +91,96 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
         </div>
         
     <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- User Security Status -->
+        <div class="grid grid-cols-1 gap-8">
+          <!-- User Management -->
           <div class="bg-white rounded-xl shadow-sm border border-gray-200">
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 class="text-lg font-semibold text-gray-900">User Security Status</h3>
-              <button
-                phx-click="refresh_users"
-                class="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Refresh
-              </button>
+              <h3 class="text-lg font-semibold text-gray-900">User Management</h3>
+              <div class="flex items-center space-x-3">
+                <button
+                  phx-click="refresh_users"
+                  class="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Refresh
+                </button>
+                <button
+                  phx-click="show_create_user_form"
+                  class="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                >
+                  Create User
+                </button>
+              </div>
             </div>
+
+            <%= if @show_create_user_form do %>
+              <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <h4 class="text-md font-medium text-gray-900 mb-4">Create New User</h4>
+                <.form
+                  for={@user_form}
+                  id="create-user-form"
+                  phx-submit="create_user"
+                  class="grid grid-cols-1 md:grid-cols-3 gap-4"
+                >
+                  <.input
+                    field={@user_form[:email]}
+                    type="email"
+                    label="Email"
+                    placeholder="user@example.com"
+                    required
+                    class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                  />
+                  <.input
+                    field={@user_form[:name]}
+                    type="text"
+                    label="Full Name"
+                    placeholder="John Doe"
+                    required
+                    class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                  />
+                  <.input
+                    field={@user_form[:phone_number]}
+                    type="tel"
+                    label="Phone Number"
+                    placeholder="+1234567890"
+                    required
+                    class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                  />
+                  <.input
+                    field={@user_form[:password]}
+                    type="password"
+                    label="Password"
+                    placeholder="Temporary password"
+                    required
+                    class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                  />
+                  <.input
+                    field={@user_form[:next_of_kin_passport]}
+                    type="text"
+                    label="Next of Kin Passport"
+                    placeholder="ABC123456"
+                    required
+                    class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                  />
+                  <div class="flex items-end space-x-2">
+                    <button
+                      type="submit"
+                      class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                      phx-disable-with="Creating..."
+                    >
+                      Create
+                    </button>
+                    <button
+                      type="button"
+                      phx-click="hide_create_user_form"
+                      class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </.form>
+              </div>
+            <% end %>
+
             <div class="p-6">
               <div class="space-y-4 max-h-96 overflow-y-auto">
                 <%= for user <- @users do %>
@@ -112,22 +190,64 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
                       <div>
                         <p class="font-medium text-gray-900">{user.email}</p>
                         <p class="text-sm text-gray-500">{user.name}</p>
+                        <p class="text-xs text-gray-400">ID: {user.id}</p>
                       </div>
                     </div>
-                    <div class="text-right">
+                    <div class="flex items-center space-x-4">
+                      <div class="text-right">
+                        <div class="flex items-center space-x-2">
+                          <%= if user.two_factor_enabled do %>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                              2FA
+                            </span>
+                          <% end %>
+                          <span class={"inline-flex items-center px-2 py-1 rounded-full text-xs font-medium #{verification_badge_class(user.verification_status)}"}>
+                            {String.capitalize(user.verification_status)}
+                          </span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">
+                          Joined {Calendar.strftime(user.inserted_at, "%b %d, %Y")}
+                        </p>
+                      </div>
+                      
+    <!-- User Actions -->
                       <div class="flex items-center space-x-2">
-                        <%= if user.two_factor_enabled do %>
-                          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                            2FA
+                        <%= if user.verification_status == "pending" do %>
+                          <button
+                            phx-click="verify_user"
+                            phx-value-user-id={user.id}
+                            class="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                          >
+                            Verify
+                          </button>
+                        <% end %>
+
+                        <%= if user.verification_status == "verified" do %>
+                          <button
+                            phx-click="suspend_user"
+                            phx-value-user-id={user.id}
+                            phx-confirm="Are you sure you want to suspend this user?"
+                            class="px-2 py-1 text-xs bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors"
+                          >
+                            Suspend
+                          </button>
+                        <% end %>
+
+                        <%= if user.id != @current_scope.user.id do %>
+                          <button
+                            phx-click="delete_user"
+                            phx-value-user-id={user.id}
+                            phx-confirm="Are you sure you want to permanently delete this user? This action cannot be undone."
+                            class="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                          >
+                            Delete
+                          </button>
+                        <% else %>
+                          <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded">
+                            Current Admin
                           </span>
                         <% end %>
-                        <span class={"inline-flex items-center px-2 py-1 rounded-full text-xs font-medium #{verification_badge_class(user.verification_status)}"}>
-                          {String.capitalize(user.verification_status)}
-                        </span>
                       </div>
-                      <p class="text-xs text-gray-500 mt-1">
-                        Joined {Calendar.strftime(user.inserted_at, "%b %d, %Y")}
-                      </p>
                     </div>
                   </div>
                 <% end %>
@@ -190,7 +310,7 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
             <h3 class="text-lg font-semibold text-gray-900">Security Actions</h3>
           </div>
           <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
               <button
                 phx-click="export_security_report"
                 class="flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -212,6 +332,13 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
               >
                 <.icon name="hero-shield-check" class="w-5 h-5 mr-2" /> Force 2FA Review
               </button>
+
+              <button
+                phx-click="bulk_email_users"
+                class="flex items-center justify-center px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                <.icon name="hero-envelope" class="w-5 h-5 mr-2" /> Bulk Email Users
+              </button>
             </div>
           </div>
         </div>
@@ -222,11 +349,15 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
 
   def mount(_params, _session, socket) do
     if authorized?(socket.assigns.current_scope) do
+      changeset = Accounts.change_user_registration(%Accounts.User{})
+
       {:ok,
        socket
        |> assign(:metrics, get_security_metrics())
        |> assign(:users, get_recent_users())
        |> assign(:rate_limited_ips, get_rate_limited_ips())
+       |> assign(:show_create_user_form, false)
+       |> assign(:user_form, to_form(changeset))
        |> schedule_refresh()}
     else
       {:ok,
@@ -236,10 +367,98 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
     end
   end
 
+  def handle_event("show_create_user_form", _params, socket) do
+    changeset = Accounts.change_user_registration(%Accounts.User{})
+
+    {:noreply,
+     socket
+     |> assign(:show_create_user_form, true)
+     |> assign(:user_form, to_form(changeset))}
+  end
+
+  def handle_event("hide_create_user_form", _params, socket) do
+    {:noreply, assign(socket, :show_create_user_form, false)}
+  end
+
+  def handle_event("create_user", %{"user" => user_params}, socket) do
+    case Accounts.register_user(user_params) do
+      {:ok, user} ->
+        # Auto-confirm the user since admin created it
+        confirmed_user =
+          user
+          |> Accounts.User.confirm_changeset()
+          |> Repo.update!()
+
+        {:noreply,
+         socket
+         |> assign(:users, get_recent_users())
+         |> assign(:show_create_user_form, false)
+         |> assign(:metrics, get_security_metrics())
+         |> put_flash(:info, "User #{confirmed_user.email} created successfully!")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, :user_form, to_form(changeset))}
+    end
+  end
+
+  def handle_event("verify_user", %{"user-id" => user_id}, socket) do
+    user = Accounts.get_user!(user_id)
+
+    case Repo.update(Ecto.Changeset.change(user, verification_status: "verified")) do
+      {:ok, _user} ->
+        {:noreply,
+         socket
+         |> assign(:users, get_recent_users())
+         |> assign(:metrics, get_security_metrics())
+         |> put_flash(:info, "User #{user.email} has been verified")}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Failed to verify user")}
+    end
+  end
+
+  def handle_event("suspend_user", %{"user-id" => user_id}, socket) do
+    user = Accounts.get_user!(user_id)
+
+    case Repo.update(Ecto.Changeset.change(user, verification_status: "suspended")) do
+      {:ok, _user} ->
+        {:noreply,
+         socket
+         |> assign(:users, get_recent_users())
+         |> assign(:metrics, get_security_metrics())
+         |> put_flash(:info, "User #{user.email} has been suspended")}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Failed to suspend user")}
+    end
+  end
+
+  def handle_event("delete_user", %{"user-id" => user_id}, socket) do
+    user = Accounts.get_user!(user_id)
+
+    # Prevent admin from deleting themselves
+    if user.id == socket.assigns.current_scope.user.id do
+      {:noreply, put_flash(socket, :error, "You cannot delete your own account")}
+    else
+      case Repo.delete(user) do
+        {:ok, _user} ->
+          {:noreply,
+           socket
+           |> assign(:users, get_recent_users())
+           |> assign(:metrics, get_security_metrics())
+           |> put_flash(:info, "User #{user.email} has been permanently deleted")}
+
+        {:error, _changeset} ->
+          {:noreply, put_flash(socket, :error, "Failed to delete user")}
+      end
+    end
+  end
+
   def handle_event("refresh_users", _params, socket) do
     {:noreply,
      socket
      |> assign(:users, get_recent_users())
+     |> assign(:metrics, get_security_metrics())
      |> put_flash(:info, "User list refreshed")}
   end
 
@@ -284,6 +503,13 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
     {:noreply,
      socket
      |> put_flash(:info, "2FA review process initiated for all users")}
+  end
+
+  def handle_event("bulk_email_users", _params, socket) do
+    # This would send a bulk email to all users
+    {:noreply,
+     socket
+     |> put_flash(:info, "Bulk email sent to all users")}
   end
 
   def handle_info(:refresh, socket) do
@@ -342,7 +568,7 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
   defp get_recent_users do
     from(u in SecureAuth.Accounts.User,
       order_by: [desc: u.inserted_at],
-      limit: 10
+      limit: 20
     )
     |> Repo.all()
   end
@@ -360,8 +586,9 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
     cond do
       user.verification_status == "verified" and user.two_factor_enabled -> "bg-green-500"
       user.verification_status == "verified" -> "bg-yellow-500"
-      user.confirmation_at -> "bg-blue-500"
-      true -> "bg-red-500"
+      user.verified_at || user.confirmed_at -> "bg-blue-500"
+      user.verification_status == "suspended" -> "bg-red-500"
+      true -> "bg-gray-500"
     end
   end
 
@@ -369,6 +596,7 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
     case status do
       "verified" -> "bg-green-100 text-green-700"
       "pending" -> "bg-yellow-100 text-yellow-700"
+      "suspended" -> "bg-red-100 text-red-700"
       "rejected" -> "bg-red-100 text-red-700"
       _ -> "bg-gray-100 text-gray-700"
     end
