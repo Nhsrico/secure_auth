@@ -38,48 +38,43 @@ const Hooks = {
       }
     },
 
-    generateQRCode(text) {
-      // Simple QR code generation using a library-free approach
-      // In production, you'd want to use a proper QR library
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const size = 200;
-      canvas.width = size;
-      canvas.height = size;
-
-      // Create a simple placeholder QR code pattern
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(0, 0, size, size);
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(10, 10, size - 20, size - 20);
-
-      // Add some QR-like pattern
-      ctx.fillStyle = "#000000";
-      for (let i = 0; i < 10; i++) {
-        for (let j = 0; j < 10; j++) {
-          if ((i + j) % 2 === 0) {
-            ctx.fillRect(20 + i * 16, 20 + j * 16, 14, 14);
-          }
-        }
-      }
-
-      // Add corner squares (typical QR code feature)
-      ctx.fillRect(20, 20, 40, 40);
-      ctx.fillRect(140, 20, 40, 40);
-      ctx.fillRect(20, 140, 40, 40);
-
-      // Clear centers of corner squares
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(30, 30, 20, 20);
-      ctx.fillRect(150, 30, 20, 20);
-      ctx.fillRect(30, 150, 20, 20);
-
-      // Add text below
-      ctx.fillStyle = "#666666";
-      ctx.font = "12px monospace";
-      ctx.fillText("Scan with authenticator app", 10, size - 10);
-
-      this.el.appendChild(canvas);
+  generateQRCode(text) {
+    // Create a more professional QR code placeholder
+    const container = document.createElement("div");
+    container.className = "flex flex-col items-center space-y-3";
+    
+    // QR Code placeholder
+    const qrBox = document.createElement("div");
+    qrBox.className = "w-48 h-48 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center";
+    qrBox.innerHTML = `
+      <div class="text-center">
+        <div class="w-32 h-32 bg-gray-100 border border-gray-300 rounded mb-2 flex items-center justify-center">
+          <div class="grid grid-cols-8 gap-0.5">
+            ${Array.from({length: 64}, (_, i) => 
+              `<div class="w-1 h-1 ${(i + Math.floor(i/8)) % 2 === 0 ? 'bg-gray-800' : 'bg-gray-200'} rounded-sm"></div>`
+            ).join('')}
+          </div>
+        </div>
+        <p class="text-xs text-gray-500">QR Code</p>
+      </div>
+    `;
+    
+    // Instructions
+    const instructions = document.createElement("div");
+    instructions.className = "text-center text-sm text-gray-600";
+    instructions.innerHTML = `
+      <p class="font-medium">Scan with your authenticator app:</p>
+      <div class="mt-1 space-y-0.5">
+        <p>• Google Authenticator</p>
+        <p>• Authy</p>
+        <p>• Microsoft Authenticator</p>
+      </div>
+    `;
+    
+    container.appendChild(qrBox);
+    container.appendChild(instructions);
+    this.el.appendChild(container);
+  },
     },
   },
 };
