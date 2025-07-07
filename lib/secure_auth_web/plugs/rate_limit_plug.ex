@@ -42,13 +42,13 @@ defmodule SecureAuthWeb.Plugs.RateLimitPlug do
 
   defp get_identifier(conn) do
     # Use IP address as the primary identifier
-    case get_peer_data(conn) do
+    case get_client_peer_data(conn) do
       %{address: {a, b, c, d}} -> "#{a}.#{b}.#{c}.#{d}"
       _ -> "unknown"
     end
   end
 
-  defp get_peer_data(conn) do
+  defp get_client_peer_data(conn) do
     conn.peer_data || %{address: {127, 0, 0, 1}}
   end
 
