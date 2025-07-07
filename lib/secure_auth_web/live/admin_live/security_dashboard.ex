@@ -586,7 +586,7 @@ defmodule SecureAuthWeb.AdminLive.SecurityDashboard do
     cond do
       user.verification_status == "verified" and user.two_factor_enabled -> "bg-green-500"
       user.verification_status == "verified" -> "bg-yellow-500"
-      user.verified_at || user.confirmed_at -> "bg-blue-500"
+      user.confirmed_at -> "bg-blue-500"
       user.verification_status == "suspended" -> "bg-red-500"
       true -> "bg-gray-500"
     end
