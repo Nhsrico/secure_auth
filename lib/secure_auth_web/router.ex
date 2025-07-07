@@ -73,6 +73,7 @@ defmodule SecureAuthWeb.Router do
       live "/users/verify-2fa", UserLive.Verify2FA, :new
     end
 
+    plug :rate_limit_login when action in [:create]
     post "/users/log-in", UserSessionController, :create
     delete "/users/log-out", UserSessionController, :delete
   end
