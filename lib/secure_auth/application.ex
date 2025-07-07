@@ -9,6 +9,7 @@ defmodule SecureAuth.Application do
   def start(_type, _args) do
     children = [
       SecureAuthWeb.Telemetry,
+      SecureAuth.RateLimiter,
       SecureAuth.Repo,
       {Ecto.Migrator,
        repos: Application.fetch_env!(:secure_auth, :ecto_repos), skip: skip_migrations?()},
