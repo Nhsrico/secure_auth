@@ -22,6 +22,17 @@ defmodule SecureAuth.Accounts.User do
     field :passport_number, :string, virtual: true, redact: true
     field :next_of_kin_passport, :string, virtual: true, redact: true
 
+    # 2FA fields
+    field :totp_secret_encrypted, :binary
+    field :two_factor_enabled, :boolean, default: false
+    field :backup_codes_encrypted, :binary
+    field :totp_last_used_at, :utc_datetime
+
+    # Virtual fields for 2FA
+    field :totp_secret, :string, virtual: true, redact: true
+    field :backup_codes, {:array, :string}, virtual: true, redact: true
+    field :totp_code, :string, virtual: true, redact: true
+
     timestamps(type: :utc_datetime)
   end
 
