@@ -2,6 +2,7 @@ defmodule SecureAuthWeb.UserSessionController do
   use SecureAuthWeb, :controller
 
   alias SecureAuthWeb.Plugs.RateLimitPlug
+  alias SecureAuth.RateLimiter
 
   alias SecureAuth.Accounts
   alias SecureAuthWeb.UserAuth
@@ -30,6 +31,9 @@ defmodule SecureAuthWeb.UserSessionController do
     %{"email" => email, "password" => password} = user_params
 
     if user = Accounts.get_user_by_email_and_password(email, password) do
+      # Reset rate limit on successful login
+      reset_login_rate_limit(conn)
+
       # Check if user has 2FA enabled
       if user.two_factor_enabled do
         # Store user in session temporarily and redirect to 2FA verification
@@ -58,6 +62,9 @@ defmodule SecureAuthWeb.UserSessionController do
     case {user_id, user_id && Accounts.get_user!(user_id)} do
       {user_id, user} when not is_nil(user_id) and not is_nil(user) ->
         if Accounts.verify_totp(user, code) do
+          # Reset 2FA rate limit on successful verification
+          reset_2fa_rate_limit(conn)
+
           conn
           |> delete_session(:pending_user_id)
           |> delete_session(:remember_me)
@@ -82,6 +89,9 @@ defmodule SecureAuthWeb.UserSessionController do
     case {user_id, user_id && Accounts.get_user!(user_id)} do
       {user_id, user} when not is_nil(user_id) and not is_nil(user) ->
         if Accounts.verify_backup_code(user, code) do
+          # Reset 2FA rate limit on successful verification
+          reset_2fa_rate_limit(conn)
+
           conn
           |> delete_session(:pending_user_id)
           |> delete_session(:remember_me)
@@ -109,6 +119,9 @@ defmodule SecureAuthWeb.UserSessionController do
     if user = Accounts.get_user!(user_id) do
       case Accounts.update_user_password(user, params["user"]) do
         {:ok, user, _expired_tokens} ->
+          # Reset rate limit on successful password update
+          reset_login_rate_limit(conn)
+
           conn
           |> put_session(:user_return_to, ~p"/users/settings")
           |> UserAuth.log_in_user(user, %{})
@@ -122,6 +135,26 @@ defmodule SecureAuthWeb.UserSessionController do
       conn
       |> put_flash(:error, "Invalid user")
       |> redirect(to: ~p"/users/log-in")
+    end
+  end
+
+  # Private helper functions for rate limit reset
+
+  defp reset_login_rate_limit(conn) do
+    identifier = get_client_identifier(conn)
+    RateLimiter.reset_rate_limit(identifier, :login)
+  end
+
+  defp reset_2fa_rate_limit(conn) do
+    identifier = get_client_identifier(conn)
+    RateLimiter.reset_rate_limit(identifier, :two_fa)
+  end
+
+  defp get_client_identifier(conn) do
+    # Use IP address as the identifier (same as in RateLimitPlug)
+    case conn.remote_ip do
+      {a, b, c, d} -> "#{a}.#{b}.#{c}.#{d}"
+      _ -> "unknown"
     end
   end
 end
