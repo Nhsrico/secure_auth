@@ -48,31 +48,31 @@ const Hooks = {
       qrBox.className =
         "w-48 h-48 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center";
       qrBox.innerHTML = `
-        <div class="text-center">
-          <div class="w-32 h-32 bg-gray-100 border border-gray-300 rounded mb-2 flex items-center justify-center">
-            <div class="grid grid-cols-8 gap-0.5">
-              ${Array.from(
-                { length: 64 },
-                (_, i) =>
-                  `<div class="w-1 h-1 ${(i + Math.floor(i / 8)) % 2 === 0 ? "bg-gray-800" : "bg-gray-200"} rounded-sm"></div>`,
-              ).join("")}
+          <div class="text-center">
+            <div class="w-32 h-32 bg-gray-100 border border-gray-300 rounded mb-2 flex items-center justify-center">
+              <div class="grid grid-cols-8 gap-0.5">
+                ${Array.from(
+                  { length: 64 },
+                  (_, i) =>
+                    `<div class="w-1 h-1 ${(i + Math.floor(i / 8)) % 2 === 0 ? "bg-gray-800" : "bg-gray-200"} rounded-sm"></div>`,
+                ).join("")}
+              </div>
             </div>
+            <p class="text-xs text-gray-500">QR Code</p>
           </div>
-          <p class="text-xs text-gray-500">QR Code</p>
-        </div>
-      `;
+        `;
 
       // Instructions
       const instructions = document.createElement("div");
       instructions.className = "text-center text-sm text-gray-600";
       instructions.innerHTML = `
-        <p class="font-medium">Scan with your authenticator app:</p>
-        <div class="mt-1 space-y-0.5">
-          <p>• Google Authenticator</p>
-          <p>• Authy</p>
-          <p>• Microsoft Authenticator</p>
-        </div>
-      `;
+          <p class="font-medium">Scan with your authenticator app:</p>
+          <div class="mt-1 space-y-0.5">
+            <p>• Google Authenticator</p>
+            <p>• Authy</p>
+            <p>• Microsoft Authenticator</p>
+          </div>
+        `;
 
       container.appendChild(qrBox);
       container.appendChild(instructions);
@@ -88,22 +88,25 @@ const liveSocket = new LiveSocket("/live", Socket, {
 });
 
 // Download functionality for backup codes
-// Copy to clipboard functionality for API keys\
-window.addEventListener("phx:copy_to_clipboard", (event) => {\
-  const { text } = event.detail;\
-  navigator.clipboard.writeText(text).then(() => {\
-    console.log("Text copied to clipboard");\
-  }).catch(err => {\
-    console.error("Failed to copy text: ", err);\
-    // Fallback for older browsers\
-    const textArea = document.createElement("textarea");\
-    textArea.value = text;\
-    document.body.appendChild(textArea);\
-    textArea.select();\
-    document.execCommand("copy");\
-    document.body.removeChild(textArea);\
-  });\
-});\
+// Copy to clipboard functionality for API keys
+window.addEventListener("phx:copy_to_clipboard", (event) => {
+  const { text } = event.detail;
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      console.log("Text copied to clipboard");
+    })
+    .catch((err) => {
+      console.error("Failed to copy text: ", err);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+    });
+});
 
 window.addEventListener("phx:download", (event) => {
   const { filename, content, content_type } = event.detail;
