@@ -236,7 +236,7 @@ defmodule SecureAuthWeb.UserLive.Login do
      |> assign_backup_form(), temporary_assigns: [form: form]}
   end
 
-  def handle_event("send_magic_link", %{"user" => %{"email" => email}}, socket) do
+  def handle_event("send_magic_link", %{"magic_link" => %{"email" => email}}, socket) do
     if user = Accounts.get_user_by_email(email) do
       Accounts.deliver_login_instructions(
         user,
