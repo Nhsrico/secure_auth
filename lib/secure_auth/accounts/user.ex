@@ -237,6 +237,63 @@ defmodule SecureAuth.Accounts.User do
   end
 
   def valid_password?(_, _) do
+
+  @doc """
+  A user changeset for OAuth2 registration.
+  """
+  def oauth_registration_changeset(user, attrs, opts \ []) do
+    user
+    |> cast(attrs, [
+      :email,
+      :name,
+      :phone_number,
+      :next_of_kin_passport,
+      :google_id,
+      :github_id,
+      :microsoft_id,
+      :oauth_email_verified,
+      :oauth_avatar_url,
+      :oauth_first_login,
+      :oauth_tokens_encrypted,
+      :confirmed_at
+    ])
+    |> validate_required([:email, :name, :phone_number, :next_of_kin_passport])
+    |> validate_length(:name, min: 2, max: 100)
+    |> validate_format(:phone_number, ~r/^+?[1-9]d{1,14}$/,
+      message: "must be a valid phone number"
+    )
+    |> validate_email(opts)
+    |> encrypt_oauth_field(:next_of_kin_passport, :next_of_kin_passport_encrypted)
+
+  @doc """
+  A user changeset for updating OAuth2 information.
+  """
+  def oauth_update_changeset(user, attrs) do
+    user
+    |> cast(attrs, [
+      :google_id,
+      :github_id,
+      :microsoft_id,
+      :oauth_email_verified,
+      :oauth_avatar_url,
+      :oauth_last_login,
+      :oauth_tokens_encrypted
+    ])
+  end
+
+  defp encrypt_oauth_field(changeset, virtual_field, encrypted_field) do
+    value = get_change(changeset, virtual_field)
+
+    if value do
+      encrypted_value = Base.encode64(value)
+
+      changeset
+      |> put_change(encrypted_field, encrypted_value)
+      |> delete_change(virtual_field)
+    else
+      changeset
+    end
+  end
     Bcrypt.no_user_verify()
     false
   end
