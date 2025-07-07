@@ -67,12 +67,15 @@ defmodule SecureAuthWeb.Router do
 
     live_session :current_user,
       on_mount: [{SecureAuthWeb.UserAuth, :mount_current_scope}] do
+      plug :rate_limit_registration when action in [:new]
       live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
       live "/users/log-in/:token", UserLive.Confirmation, :new
+      plug :rate_limit_two_fa when action in [:new]
       live "/users/verify-2fa", UserLive.Verify2FA, :new
     end
 
+    plug :rate_limit_login when action in [:create]
     post "/users/log-in", UserSessionController, :create
     delete "/users/log-out", UserSessionController, :delete
   end
