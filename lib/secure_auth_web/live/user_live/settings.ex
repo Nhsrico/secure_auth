@@ -1,8 +1,6 @@
 defmodule SecureAuthWeb.UserLive.Settings do
   use SecureAuthWeb, :live_view
 
-  on_mount {SecureAuthWeb.UserAuth, :require_sudo_mode}
-
   alias SecureAuth.Accounts
 
   def render(assigns) do
