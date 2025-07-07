@@ -214,12 +214,9 @@ defmodule SecureAuthWeb.UserLive.TwoFactorSetup do
 
   defp generate_qr_code_svg(qr_uri) do
     try do
-      qr_uri
-      |> QRCode.create(:high)
-      |> case do
+      case QRCode.create(qr_uri) do
         {:ok, qr_code} ->
-          qr_code
-          |> QRCode.render(:svg, width: 200)
+          matrix_to_svg(qr_code.matrix, 8)
 
         {:error, _reason} ->
           nil
@@ -227,5 +224,31 @@ defmodule SecureAuthWeb.UserLive.TwoFactorSetup do
     rescue
       _ -> nil
     end
+  end
+
+  defp matrix_to_svg(matrix, scale) do
+    size = length(matrix)
+    svg_size = size * scale
+
+    # Convert matrix to SVG rectangles
+    rectangles =
+      matrix
+      |> Enum.with_index()
+      |> Enum.flat_map(fn {row, y} ->
+        row
+        |> Enum.with_index()
+        |> Enum.filter(fn {cell, _x} -> cell == 1 end)
+        |> Enum.map(fn {_cell, x} ->
+          "<rect x=\"#{x * scale}\" y=\"#{y * scale}\" width=\"#{scale}\" height=\"#{scale}\" fill=\"black\"/>"
+        end)
+      end)
+      |> Enum.join("")
+
+    """
+    <svg width="#{svg_size}" height="#{svg_size}" viewBox="0 0 #{svg_size} #{svg_size}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="#{svg_size}" height="#{svg_size}" fill="white"/>
+      #{rectangles}
+    </svg>
+    """
   end
 end
