@@ -215,11 +215,11 @@ defmodule SecureAuthWeb.UserLive.TwoFactorSetup do
   defp generate_qr_code_svg(qr_uri) do
     try do
       qr_uri
-      |> QrCode.create(:high)
+      |> QRCode.create(:high)
       |> case do
         {:ok, qr_code} ->
           qr_code
-          |> QrCode.render(:svg, width: 200)
+          |> QRCode.render(:svg, width: 200)
 
         {:error, _reason} ->
           nil
