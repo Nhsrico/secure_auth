@@ -17,6 +17,33 @@ defmodule SecureAuthWeb.UserLive.Dashboard do
           </p>
         </div>
         
+    <!-- Admin Navigation (only for admin users) -->
+        <%= if is_admin?(@current_scope.user) do %>
+          <div class="mb-8 bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <.icon name="hero-shield-exclamation" class="w-5 h-5 text-red-400" />
+              </div>
+              <div class="ml-3 flex-1">
+                <h3 class="text-sm font-medium text-red-800">
+                  Administrator Access
+                </h3>
+                <p class="mt-1 text-sm text-red-700">
+                  You have administrative privileges to manage users and security settings.
+                </p>
+              </div>
+              <div class="ml-4">
+                <.link
+                  navigate={~p"/admin/security"}
+                  class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                >
+                  <.icon name="hero-shield-check" class="w-4 h-4 mr-2" /> Admin Security Dashboard
+                </.link>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        
     <!-- Account Status Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <!-- Account Status -->
@@ -110,6 +137,20 @@ defmodule SecureAuthWeb.UserLive.Dashboard do
                   Enable 2FA Security
                 </.link>
               <% end %>
+              <.link
+                navigate={~p"/api-keys"}
+                class="block w-full text-left px-3 py-2 text-sm text-purple-600 hover:bg-purple-50 rounded-md transition-colors"
+              >
+                Manage API Keys
+              </.link>
+              <%= if is_admin?(@current_scope.user) do %>
+                <.link
+                  navigate={~p"/admin/security"}
+                  class="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                >
+                  <.icon name="hero-shield-check" class="w-4 h-4 inline mr-1" /> Admin Dashboard
+                </.link>
+              <% end %>
             </div>
           </div>
         </div>
@@ -171,6 +212,23 @@ defmodule SecureAuthWeb.UserLive.Dashboard do
                   <span class="text-xs text-gray-500">Recent</span>
                 </div>
               <% end %>
+
+              <%= if is_admin?(@current_scope.user) do %>
+                <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                      <.icon name="hero-shield-exclamation" class="w-4 h-4 text-red-600" />
+                    </div>
+                    <div class="ml-3">
+                      <p class="text-sm font-medium text-gray-900">
+                        Administrator access granted
+                      </p>
+                      <p class="text-xs text-gray-500">System management privileges active</p>
+                    </div>
+                  </div>
+                  <span class="text-xs text-gray-500">Active</span>
+                </div>
+              <% end %>
             </div>
           </div>
         </div>
@@ -185,5 +243,10 @@ defmodule SecureAuthWeb.UserLive.Dashboard do
 
   def mount(_params, _session, socket) do
     {:ok, redirect(socket, to: ~p"/users/log-in")}
+  end
+
+  # Helper function to check if user is admin
+  defp is_admin?(user) do
+    String.contains?(user.email, "admin")
   end
 end
