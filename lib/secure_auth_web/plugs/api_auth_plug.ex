@@ -87,13 +87,13 @@ defmodule SecureAuthWeb.Plugs.ApiAuthPlug do
   end
 
   defp get_client_ip(conn) do
-    case get_peer_data(conn) do
+    case get_client_peer_data(conn) do
       %{address: {a, b, c, d}} -> "#{a}.#{b}.#{c}.#{d}"
       _ -> "unknown"
     end
   end
 
-  defp get_peer_data(conn) do
+  defp get_client_peer_data(conn) do
     %{address: conn.remote_ip}
   end
 
