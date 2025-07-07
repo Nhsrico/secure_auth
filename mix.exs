@@ -61,6 +61,8 @@ defmodule SecureAuth.MixProject do
       {:bandit, "~> 1.5"},
       {:nimble_totp, "~> 1.0"},
       {:qr_code, "~> 3.2"}
+      {:hammer, "~> 7.0"},
+      {:hammer_plug, "~> 3.2"}
     ]
   end
 
