@@ -15,6 +15,7 @@ defmodule SecureAuth.RateLimiter do
   @registration_attempts %{limit: 3, window: :timer.minutes(10)}
   @two_fa_attempts %{limit: 10, window: :timer.minutes(5)}
   @magic_link_requests %{limit: 3, window: :timer.minutes(10)}
+  @api_usage %{limit: 100, window: :timer.minutes(1)}
 
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
@@ -120,6 +121,7 @@ defmodule SecureAuth.RateLimiter do
   defp get_config(:registration), do: @registration_attempts
   defp get_config(:two_fa), do: @two_fa_attempts
   defp get_config(:magic_link), do: @magic_link_requests
+  defp get_config(:api_usage), do: @api_usage
   defp get_config(_), do: %{limit: 10, window: :timer.minutes(5)}
 
   defp count_requests(key, window_start) do
