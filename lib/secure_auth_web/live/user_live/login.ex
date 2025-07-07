@@ -32,7 +32,7 @@ defmodule SecureAuthWeb.UserLive.Login do
               class="space-y-6"
             >
               <.input
-                field={@form[:email]}
+                field={@magic_link_form[:email]}
                 type="email"
                 label="Email"
                 placeholder="you@example.com"
@@ -83,7 +83,7 @@ defmodule SecureAuthWeb.UserLive.Login do
               <div class="mt-6">
                 <.form for={@form} id="magic_link_form" phx-submit="send_magic_link" class="space-y-4">
                   <.input
-                    field={@form[:email]}
+                    field={@magic_link_form[:email]}
                     type="email"
                     label="Email for magic link"
                     placeholder="you@example.com"
