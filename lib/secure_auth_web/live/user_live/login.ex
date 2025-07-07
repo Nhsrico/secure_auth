@@ -2,7 +2,6 @@ defmodule SecureAuthWeb.UserLive.Login do
   use SecureAuthWeb, :live_view
 
   alias SecureAuth.Accounts
-  alias SecureAuth.Accounts.User
 
   def render(assigns) do
     ~H"""
@@ -51,7 +50,7 @@ defmodule SecureAuthWeb.UserLive.Login do
                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
               />
 
-              <:actions>
+              <div class="flex items-center justify-between">
                 <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
                 <.link
                   href={~p"/users/register"}
@@ -59,7 +58,7 @@ defmodule SecureAuthWeb.UserLive.Login do
                 >
                   Forgot your password?
                 </.link>
-              </:actions>
+              </div>
 
               <button
                 type="submit"
