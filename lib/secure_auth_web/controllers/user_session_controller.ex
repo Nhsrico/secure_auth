@@ -16,7 +16,7 @@ defmodule SecureAuthWeb.UserSessionController do
     create(conn, params, "Welcome back!")
   end
 
-  defp create(conn, %{"user" => user_params}, info) do
+  defp create(conn, %{"user" => user_params}, _info) do
     %{"email" => email, "password" => password} = user_params
 
     if user = Accounts.get_user_by_email_and_password(email, password) do
@@ -45,21 +45,23 @@ defmodule SecureAuthWeb.UserSessionController do
     user_id = get_session(conn, :pending_user_id)
     remember_me = get_session(conn, :remember_me)
 
-    if user_id && (user = Accounts.get_user!(user_id)) do
-      if Accounts.verify_totp(user, code) do
+    case {user_id, user_id && Accounts.get_user!(user_id)} do
+      {user_id, user} when not is_nil(user_id) and not is_nil(user) ->
+        if Accounts.verify_totp(user, code) do
+          conn
+          |> delete_session(:pending_user_id)
+          |> delete_session(:remember_me)
+          |> UserAuth.log_in_user(user, %{"remember_me" => remember_me})
+        else
+          conn
+          |> put_flash(:error, "Invalid authentication code. Please try again.")
+          |> redirect(to: ~p"/users/verify-2fa")
+        end
+
+      _ ->
         conn
-        |> delete_session(:pending_user_id)
-        |> delete_session(:remember_me)
-        |> UserAuth.log_in_user(user, %{"remember_me" => remember_me})
-      else
-        conn
-        |> put_flash(:error, "Invalid authentication code. Please try again.")
-        |> redirect(to: ~p"/users/verify-2fa")
-      end
-    else
-      conn
-      |> put_flash(:error, "Session expired. Please log in again.")
-      |> redirect(to: ~p"/users/log-in")
+        |> put_flash(:error, "Session expired. Please log in again.")
+        |> redirect(to: ~p"/users/log-in")
     end
   end
 
@@ -67,21 +69,23 @@ defmodule SecureAuthWeb.UserSessionController do
     user_id = get_session(conn, :pending_user_id)
     remember_me = get_session(conn, :remember_me)
 
-    if user_id && (user = Accounts.get_user!(user_id)) do
-      if Accounts.verify_backup_code(user, code) do
+    case {user_id, user_id && Accounts.get_user!(user_id)} do
+      {user_id, user} when not is_nil(user_id) and not is_nil(user) ->
+        if Accounts.verify_backup_code(user, code) do
+          conn
+          |> delete_session(:pending_user_id)
+          |> delete_session(:remember_me)
+          |> UserAuth.log_in_user(user, %{"remember_me" => remember_me})
+        else
+          conn
+          |> put_flash(:error, "Invalid backup code. Please try again.")
+          |> redirect(to: ~p"/users/verify-2fa")
+        end
+
+      _ ->
         conn
-        |> delete_session(:pending_user_id)
-        |> delete_session(:remember_me)
-        |> UserAuth.log_in_user(user, %{"remember_me" => remember_me})
-      else
-        conn
-        |> put_flash(:error, "Invalid backup code. Please try again.")
-        |> redirect(to: ~p"/users/verify-2fa")
-      end
-    else
-      conn
-      |> put_flash(:error, "Session expired. Please log in again.")
-      |> redirect(to: ~p"/users/log-in")
+        |> put_flash(:error, "Session expired. Please log in again.")
+        |> redirect(to: ~p"/users/log-in")
     end
   end
 
