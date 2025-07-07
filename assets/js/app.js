@@ -88,6 +88,23 @@ const liveSocket = new LiveSocket("/live", Socket, {
 });
 
 // Download functionality for backup codes
+// Copy to clipboard functionality for API keys\
+window.addEventListener("phx:copy_to_clipboard", (event) => {\
+  const { text } = event.detail;\
+  navigator.clipboard.writeText(text).then(() => {\
+    console.log("Text copied to clipboard");\
+  }).catch(err => {\
+    console.error("Failed to copy text: ", err);\
+    // Fallback for older browsers\
+    const textArea = document.createElement("textarea");\
+    textArea.value = text;\
+    document.body.appendChild(textArea);\
+    textArea.select();\
+    document.execCommand("copy");\
+    document.body.removeChild(textArea);\
+  });\
+});\
+
 window.addEventListener("phx:download", (event) => {
   const { filename, content, content_type } = event.detail;
   const blob = new Blob([content], { type: content_type });
