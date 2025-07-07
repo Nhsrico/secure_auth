@@ -1,3 +1,21 @@
+==> result
+Compiling 7 files (.ex)
+Generated result app
+==> ex_maybe
+Compiling 1 file (.ex)
+Generated ex_maybe app
+==> xml_builder
+Compiling 3 files (.ex)
+Generated xml_builder app
+==> matrix_reloaded
+Compiling 3 files (.ex)
+Generated matrix_reloaded app
+==> pngex
+Compiling 4 files (.ex)
+Generated pngex app
+==> qr_code
+Compiling 24 files (.ex)
+Generated qr_code app
 defmodule SecureAuth.MixProject do
   use Mix.Project
 
