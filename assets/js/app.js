@@ -1,4 +1,4 @@
-// If you want to use Phoenix channels, run `mix help phx.gen.channel`
+\/\/ If you want to use Phoenix channels, run `mix help phx.gen.channel`
 // to get started and then uncomment the line below.
 // import "./user_socket.js"
 
@@ -38,45 +38,44 @@ const Hooks = {
       }
     },
 
-  generateQRCode(text) {
-    // Create a more professional QR code placeholder
-    const container = document.createElement("div");
-    container.className = "flex flex-col items-center space-y-3";
-    
-    // QR Code placeholder
-    const qrBox = document.createElement("div");
-    qrBox.className = "w-48 h-48 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center";
-    qrBox.innerHTML = `
-      <div class="text-center">
-        <div class="w-32 h-32 bg-gray-100 border border-gray-300 rounded mb-2 flex items-center justify-center">
-          <div class="grid grid-cols-8 gap-0.5">
-            ${Array.from({length: 64}, (_, i) => 
-              `<div class="w-1 h-1 ${(i + Math.floor(i/8)) % 2 === 0 ? 'bg-gray-800' : 'bg-gray-200'} rounded-sm"></div>`
-            ).join('')}
+    generateQRCode(text) {
+      // Create a more professional QR code placeholder
+      const container = document.createElement("div");
+      container.className = "flex flex-col items-center space-y-3";
+      
+      // QR Code placeholder
+      const qrBox = document.createElement("div");
+      qrBox.className = "w-48 h-48 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center";
+      qrBox.innerHTML = `
+        <div class="text-center">
+          <div class="w-32 h-32 bg-gray-100 border border-gray-300 rounded mb-2 flex items-center justify-center">
+            <div class="grid grid-cols-8 gap-0.5">
+              ${Array.from({length: 64}, (_, i) => 
+                `<div class="w-1 h-1 ${(i + Math.floor(i/8)) % 2 === 0 ? 'bg-gray-800' : 'bg-gray-200'} rounded-sm"></div>`
+              ).join('')}
+            </div>
           </div>
+          <p class="text-xs text-gray-500">QR Code</p>
         </div>
-        <p class="text-xs text-gray-500">QR Code</p>
-      </div>
-    `;
-    
-    // Instructions
-    const instructions = document.createElement("div");
-    instructions.className = "text-center text-sm text-gray-600";
-    instructions.innerHTML = `
-      <p class="font-medium">Scan with your authenticator app:</p>
-      <div class="mt-1 space-y-0.5">
-        <p>• Google Authenticator</p>
-        <p>• Authy</p>
-        <p>• Microsoft Authenticator</p>
-      </div>
-    `;
-    
-    container.appendChild(qrBox);
-    container.appendChild(instructions);
-    this.el.appendChild(container);
-  },
-    },
-  },
+      `;
+      
+      // Instructions
+      const instructions = document.createElement("div");
+      instructions.className = "text-center text-sm text-gray-600";
+      instructions.innerHTML = `
+        <p class="font-medium">Scan with your authenticator app:</p>
+        <div class="mt-1 space-y-0.5">
+          <p>• Google Authenticator</p>
+          <p>• Authy</p>
+          <p>• Microsoft Authenticator</p>
+        </div>
+      `;
+      
+      container.appendChild(qrBox);
+      container.appendChild(instructions);
+      this.el.appendChild(container);
+    }
+  }
 };
 
 const liveSocket = new LiveSocket("/live", Socket, {
