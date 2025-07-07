@@ -237,11 +237,14 @@ defmodule SecureAuth.Accounts.User do
   end
 
   def valid_password?(_, _) do
+    Bcrypt.no_user_verify()
+    false
+  end
 
   @doc """
   A user changeset for OAuth2 registration.
   """
-  def oauth_registration_changeset(user, attrs, opts \ []) do
+  def oauth_registration_changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [
       :email,
@@ -259,11 +262,12 @@ defmodule SecureAuth.Accounts.User do
     ])
     |> validate_required([:email, :name, :phone_number, :next_of_kin_passport])
     |> validate_length(:name, min: 2, max: 100)
-    |> validate_format(:phone_number, ~r/^+?[1-9]d{1,14}$/,
+    |> validate_format(:phone_number, ~r/^\+?[1-9]\d{1,14}$/,
       message: "must be a valid phone number"
     )
     |> validate_email(opts)
     |> encrypt_oauth_field(:next_of_kin_passport, :next_of_kin_passport_encrypted)
+  end
 
   @doc """
   A user changeset for updating OAuth2 information.
@@ -293,8 +297,5 @@ defmodule SecureAuth.Accounts.User do
     else
       changeset
     end
-  end
-    Bcrypt.no_user_verify()
-    false
   end
 end
