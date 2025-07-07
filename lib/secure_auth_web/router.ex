@@ -20,7 +20,7 @@ defmodule SecureAuthWeb.Router do
   scope "/", SecureAuthWeb do
     pipe_through :browser
 
-    live "/", UserLive.Registration, :new
+    live "/", UserLive.Dashboard, :index
   end
 
   # Other scopes may use custom stacks.
