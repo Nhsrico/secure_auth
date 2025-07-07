@@ -304,6 +304,49 @@ defmodule SecureAuth.Accounts do
 
   ## Token helper
 
+\
+  @doc """\
+  Enables two-factor authentication for a user.\
+  """\
+  def enable_two_factor_auth(user, totp_secret, backup_codes) do\
+    # Encrypt the secret and backup codes for storage\
+    encrypted_secret = Base.encode64(totp_secret)\
+    encrypted_codes = Base.encode64(:erlang.term_to_binary(backup_codes))\
+    \
+    changeset = \
+      user\
+      |> change(%{\
+        totp_secret_encrypted: encrypted_secret,\
+        backup_codes_encrypted: encrypted_codes,\
+        two_factor_enabled: true\
+      })\
+    \
+    Repo.update(changeset)\
+  end\
+\
+  @doc """\
+  Verifies a TOTP code for a user.\
+  """\
+  def verify_totp(user, code) do\
+    if user.two_factor_enabled && user.totp_secret_encrypted do\
+      secret = Base.decode64!(user.totp_secret_encrypted)\
+      NimbleTOTP.valid?(secret, code)\
+    else\
+      false\
+    end\
+  end\
+\
+  @doc """\
+  Verifies a backup code for a user.\
+  """\
+  def verify_backup_code(user, code) do\
+    if user.two_factor_enabled && user.backup_codes_encrypted do\
+      codes = user.backup_codes_encrypted |> Base.decode64!() |> :erlang.binary_to_term()\
+      code in codes\
+    else\
+      false\
+    end\
+  end
   defp update_user_and_delete_all_tokens(changeset) do
     %{data: %User{} = user} = changeset
 
