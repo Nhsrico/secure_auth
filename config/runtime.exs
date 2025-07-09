@@ -96,19 +96,16 @@ if config_env() == :prod do
   # ## Configuring the mailer
   #
   # In production you need to configure the mailer to use a different adapter.
+  #
+  config :secure_auth, SecureAuth.Mailer,
+    adapter: Swoosh.Adapters.Sendgrid,
+    api_key: System.get_env("SENDGRID_API_KEY")
+
   # Also, you may need to configure the Swoosh API client of your choice if you
   # are not using SMTP. Here is an example of the configuration:
   #
-  config :secure_auth, SecureAuth.Mailer,
-    adapter: Swoosh.Adapters.SMTP,
-    relay: "smtp.gmail.com",
-    domain: System.get_env("MAILGUN_DOMAIN")
-
-  #
   # For this example you need include a HTTP client required by Swoosh API client.
   # Swoosh supports Hackney, Req and Finch out of the box:
-  #
-  config :swoosh, :api_client, Swoosh.ApiClient.Finch
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
