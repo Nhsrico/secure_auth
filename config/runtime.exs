@@ -100,8 +100,8 @@ if config_env() == :prod do
   # are not using SMTP. Here is an example of the configuration:
   #
   config :secure_auth, SecureAuth.Mailer,
-    adapter: Swoosh.Adapters.Mailgun,
-    api_key: System.get_env("MAILGUN_API_KEY"),
+    adapter: Swoosh.Adapters.SMTP,
+    relay: "smtp.gmail.com",
     domain: System.get_env("MAILGUN_DOMAIN")
 
   #
