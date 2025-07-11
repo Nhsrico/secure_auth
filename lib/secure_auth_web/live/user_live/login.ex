@@ -125,7 +125,8 @@ defmodule SecureAuthWeb.UserLive.Login do
                 </a>
               </div>
             </div>
-            <!-- Magic Link Option -->
+            
+    <!-- Magic Link Option -->
             <div class="mt-6 text-center">
               <div class="relative">
                 <div class="absolute inset-0 flex items-center">
@@ -180,7 +181,8 @@ defmodule SecureAuthWeb.UserLive.Login do
                 </div>
               </div>
             </div>
-            <!-- TOTP Code Form -->
+            
+    <!-- TOTP Code Form -->
             <.form
               for={@totp_form}
               id="totp-verification-form"
@@ -204,7 +206,8 @@ defmodule SecureAuthWeb.UserLive.Login do
                 Verify and Log In
               </button>
             </.form>
-            <!-- Backup Code Option -->
+            
+    <!-- Backup Code Option -->
             <div class="mt-6">
               <%= if @show_backup_form do %>
                 <.form
@@ -247,7 +250,8 @@ defmodule SecureAuthWeb.UserLive.Login do
                 </div>
               <% end %>
             </div>
-            <!-- Return to Login -->
+            
+    <!-- Return to Login -->
             <div class="mt-6 text-center">
               <button
                 type="button"
