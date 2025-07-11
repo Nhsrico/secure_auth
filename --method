@@ -1,0 +1,42 @@
+==========================
+https://secure-auth-prod.fly.dev/dashboard
+==========================
+
+- admin@secure-auth-prod.fly.dev
+- [Settings](/users/settings)
+- [Log out](/users/log-out)
+
+Welcome back, Production Admin!
+===============================
+
+Manage your secure account and settings from your dashboard.
+
+# ## Account Status
+
+Verified & Active
+
+Email: admin@secure-auth-prod.fly.dev
+
+Member since: July 2025
+
+Verification: Pending
+
+# ## Security
+
+2FA Disabled
+
+Two-Factor Auth: Disabled
+
+# ## Quick Actions
+
+Manage your account
+
+[Account Settings](/users/settings) [Enable 2FA Security](/users/two-factor-setup)
+
+# ## Recent Activity
+
+Successful login
+
+via email/password
+
+Just now
