@@ -19,6 +19,11 @@ config :secure_auth, SecureAuth.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: false
 
+# Configure SendGrid mailer for production
+config :secure_auth, SecureAuth.Mailer,
+  adapter: Swoosh.Adapters.Sendgrid,
+  api_key: System.get_env("SENDGRID_API_KEY")
+
 # Configures Swoosh API Client
 config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: SecureAuth.Finch
 
