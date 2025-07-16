@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for secure-auth-black-wildflower-6205 on 2025-07-11T14:00:17Z
+# fly.toml app configuration file generated for secure-auth-lively-frost-9673 on 2025-07-16T09:53:46Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'secure-auth-black-wildflower-6205'
+app = 'secure-auth-lively-frost-9673'
 primary_region = 'fra'
 kill_signal = 'SIGTERM'
 
@@ -13,7 +13,7 @@ kill_signal = 'SIGTERM'
   release_command = '/app/bin/migrate'
 
 [env]
-  PHX_HOST = 'secure-auth-black-wildflower-6205.fly.dev'
+  PHX_HOST = 'secure-auth-lively-frost-9673.fly.dev'
   PORT = '8080'
 
 [http_service]
