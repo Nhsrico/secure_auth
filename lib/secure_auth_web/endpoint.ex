@@ -1,17 +1,6 @@
 defmodule SecureAuthWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :secure_auth
 
-  # Helper function for check_origin configuration
-  def check_origin do
-    host = System.get_env("PHX_HOST")
-
-    if host do
-      ["//#{host}", "//localhost"]
-    else
-      :conn
-    end
-  end
-
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
@@ -23,8 +12,8 @@ defmodule SecureAuthWeb.Endpoint do
   ]
 
   socket "/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [session: @session_options], check_origin: check_origin()],
-    longpoll: [connect_info: [session: @session_options], check_origin: check_origin()]
+    websocket: [connect_info: [session: @session_options], check_origin: :conn],
+    longpoll: [connect_info: [session: @session_options], check_origin: :conn]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
