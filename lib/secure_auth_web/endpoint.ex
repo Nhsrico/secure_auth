@@ -53,7 +53,7 @@ defmodule SecureAuthWeb.Endpoint do
   plug SecureAuthWeb.Router
 
   # Helper function for check_origin configuration
-  defp check_origin do
+  def check_origin do
     host = System.get_env("PHX_HOST")
 
     if host do
