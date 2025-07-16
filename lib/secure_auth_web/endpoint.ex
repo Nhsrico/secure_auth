@@ -12,8 +12,8 @@ defmodule SecureAuthWeb.Endpoint do
   ]
 
   socket "/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [session: @session_options]],
-    longpoll: [connect_info: [session: @session_options]]
+    websocket: [connect_info: [session: @session_options], check_origin: check_origin()],
+    longpoll: [connect_info: [session: @session_options], check_origin: check_origin()]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -51,4 +51,15 @@ defmodule SecureAuthWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug SecureAuthWeb.Router
+
+  # Helper function for check_origin configuration
+  defp check_origin do
+    host = System.get_env("PHX_HOST")
+
+    if host do
+      ["//#{host}", "//localhost"]
+    else
+      :conn
+    end
+  end
 end
