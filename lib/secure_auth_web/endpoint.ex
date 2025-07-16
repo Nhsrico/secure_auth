@@ -12,8 +12,20 @@ defmodule SecureAuthWeb.Endpoint do
   ]
 
   socket "/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [session: @session_options], check_origin: :conn],
-    longpoll: [connect_info: [session: @session_options], check_origin: :conn]
+    websocket: [
+      connect_info: [session: @session_options],
+      check_origin: [
+        "https://secure-auth-lively-frost-9673.fly.dev",
+        "//secure-auth-lively-frost-9673.fly.dev"
+      ]
+    ],
+    longpoll: [
+      connect_info: [session: @session_options],
+      check_origin: [
+        "https://secure-auth-lively-frost-9673.fly.dev",
+        "//secure-auth-lively-frost-9673.fly.dev"
+      ]
+    ]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
