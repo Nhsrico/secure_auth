@@ -13,7 +13,10 @@ defmodule SecureAuthWeb.UserLive.Login do
             Log in to your account
             <:subtitle>
               Don't have an account?
-              <a navigate={~p"/users/register"} class="font-semibold text-blue-600 hover:underline">
+              <a
+                navigate={~p"/users/reset-password"}
+                class="font-semibold text-blue-600 hover:underline"
+              >
                 Sign up
               </a>
               for an account now.
