@@ -75,6 +75,7 @@ defmodule SecureAuthWeb.Router do
       live "/users/log-in", UserLive.Login, :new
       live "/users/log-in/:token", UserLive.Confirmation, :new
       live "/users/verify-2fa", UserLive.Verify2FA, :new
+      live "/users/reset-password", UserLive.ResetPassword, :new
     end
 
     post "/users/log-in", UserSessionController, :create
