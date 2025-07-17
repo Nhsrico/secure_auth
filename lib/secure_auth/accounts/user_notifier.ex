@@ -42,130 +42,30 @@ defmodule SecureAuth.Accounts.UserNotifier do
   Deliver instructions to log in with a magic link.
   """
   def deliver_login_instructions(user, url) do
+    deliver(user.email, "Log in instructions", """
+
+    ==============================
+
+    Hi #{user.email},
+
+    You can log into your account by visiting the URL below:
+
+    #{url}
+
+    If you didn't request this email, please ignore this.
+
+    ==============================
+    """)
+  end
 
   @doc """
   Deliver instructions to reset a user password.
   """
   def deliver_reset_password_instructions(user, url) do
-    deliver(user.email, "Reset your SecureAuth password", """
-
-    ==============================
-
-    Hi #{user.name},
-
-    You can reset your password by visiting the URL below:
-
-    #{url}
-
-    If you didn't request this change, please ignore this.
-
-    ==============================
-    """)
-  end
     case user do
-
-  @doc """
-  Deliver instructions to reset a user password.
-  """
-  def deliver_reset_password_instructions(user, url) do
-    deliver(user.email, "Reset your SecureAuth password", """
-
-    ==============================
-
-    Hi #{user.name},
-
-    You can reset your password by visiting the URL below:
-
-    #{url}
-
-    If you didn't request this change, please ignore this.
-
-    ==============================
-    """)
-  end
       %User{confirmed_at: nil} -> deliver_confirmation_instructions(user, url)
-
-  @doc """
-  Deliver instructions to reset a user password.
-  """
-  def deliver_reset_password_instructions(user, url) do
-    deliver(user.email, "Reset your SecureAuth password", """
-
-    ==============================
-
-    Hi #{user.name},
-
-    You can reset your password by visiting the URL below:
-
-    #{url}
-
-    If you didn't request this change, please ignore this.
-
-    ==============================
-    """)
-  end
       _ -> deliver_magic_link_instructions(user, url)
-
-  @doc """
-  Deliver instructions to reset a user password.
-  """
-  def deliver_reset_password_instructions(user, url) do
-    deliver(user.email, "Reset your SecureAuth password", """
-
-    ==============================
-
-    Hi #{user.name},
-
-    You can reset your password by visiting the URL below:
-
-    #{url}
-
-    If you didn't request this change, please ignore this.
-
-    ==============================
-    """)
-  end
     end
-
-  @doc """
-  Deliver instructions to reset a user password.
-  """
-  def deliver_reset_password_instructions(user, url) do
-    deliver(user.email, "Reset your SecureAuth password", """
-
-    ==============================
-
-    Hi #{user.name},
-
-    You can reset your password by visiting the URL below:
-
-    #{url}
-
-    If you didn't request this change, please ignore this.
-
-    ==============================
-    """)
-  end
-  end
-
-  @doc """
-  Deliver instructions to reset a user password.
-  """
-  def deliver_reset_password_instructions(user, url) do
-    deliver(user.email, "Reset your SecureAuth password", """
-
-    ==============================
-
-    Hi #{user.name},
-
-    You can reset your password by visiting the URL below:
-
-    #{url}
-
-    If you didn't request this change, please ignore this.
-
-    ==============================
-    """)
   end
 
   defp deliver_magic_link_instructions(user, url) do
