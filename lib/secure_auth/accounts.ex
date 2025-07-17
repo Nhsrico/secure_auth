@@ -319,11 +319,27 @@ defmodule SecureAuth.Accounts do
   Delivers the magic link login instructions to the given user.
   """
   def deliver_login_instructions(%User{} = user, magic_link_url_fun)
-      when is_function(magic_link_url_fun, 1) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, "login")
+
+  @doc """
+  Delivers the reset password email to the given user.
+
+  ## Examples
+
+      iex> deliver_user_reset_password_instructions(user, &url(~p"/users/reset-password/#{&1}"))
+      {:ok, %{to: ..., body: ...}}
+
+  """
+  def deliver_user_reset_password_instructions(%User{} = user, reset_password_url_fun)
+      when is_function(reset_password_url_fun, 1) do
+    {encoded_token, user_token} = UserToken.build_email_token(user, "reset_password")
     Repo.insert!(user_token)
-    UserNotifier.deliver_login_instructions(user, magic_link_url_fun.(encoded_token))
+    UserNotifier.deliver_reset_password_instructions(user, reset_password_url_fun.(encoded_token))
   end
+  when is_function(magic_link_url_fun, 1) do
+         {encoded_token, user_token} = UserToken.build_email_token(user, "login")
+         Repo.insert!(user_token)
+         UserNotifier.deliver_login_instructions(user, magic_link_url_fun.(encoded_token))
+       end
 
   @doc """
   Deletes the signed token with the given context.
