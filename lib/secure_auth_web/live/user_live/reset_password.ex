@@ -21,7 +21,12 @@ defmodule SecureAuthWeb.UserLive.ResetPassword do
             </header>
 
             <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-              <.form for={@form} id="reset_password_form" phx-submit="send_email" phx-change="validate">
+              <.form
+                for={@form}
+                id="reset_password_form"
+                phx-submit="send_email"
+                phx-change="validate"
+              >
                 <div class="space-y-6">
                   <fieldset class="fieldset mb-4">
                     <.input
@@ -34,7 +39,11 @@ defmodule SecureAuthWeb.UserLive.ResetPassword do
                     />
                   </fieldset>
 
-                  <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors" phx-disable-with="Sending...">
+                  <button
+                    type="submit"
+                    class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                    phx-disable-with="Sending..."
+                  >
                     Send reset instructions
                   </button>
                 </div>
@@ -43,7 +52,10 @@ defmodule SecureAuthWeb.UserLive.ResetPassword do
               <div class="mt-6 text-center">
                 <p class="text-sm text-base-content/70">
                   Remember your password?
-                  <.link navigate={~p"/users/log-in"} class="font-semibold text-blue-600 hover:underline">
+                  <.link
+                    navigate={~p"/users/log-in"}
+                    class="font-semibold text-blue-600 hover:underline"
+                  >
                     Sign in
                   </.link>
                 </p>
@@ -52,7 +64,7 @@ defmodule SecureAuthWeb.UserLive.ResetPassword do
           </div>
         </div>
       </main>
-    </.app>
+    </Layouts.app>
     """
   end
 
@@ -79,11 +91,10 @@ defmodule SecureAuthWeb.UserLive.ResetPassword do
     # Always show success message regardless of whether email exists
     # to prevent email enumeration attacks
     info = "If your email is in our system, you will receive password reset instructions shortly."
-    
-    {:noreply, 
+
+    {:noreply,
      socket
      |> put_flash(:info, info)
      |> redirect(to: ~p"/users/log-in")}
   end
 end
-</Layouts.app>
