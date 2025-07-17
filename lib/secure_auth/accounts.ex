@@ -156,7 +156,7 @@ defmodule SecureAuth.Accounts do
   ## Examples
 
       iex> change_user_phone(user)
-      %Ecto.Changeset{}}
+      %Ecto.Changeset{}
 
   """
   def change_user_phone(user, attrs \\ %{}) do
@@ -189,7 +189,7 @@ defmodule SecureAuth.Accounts do
   ## Examples
 
       iex> change_user_password(user)
-      %Ecto.ChangUser{}}
+      %Ecto.Changeset{}
 
   """
   def change_user_password(user, attrs \\ %{}, opts \\ []) do
@@ -319,13 +319,18 @@ defmodule SecureAuth.Accounts do
   Delivers the magic link login instructions to the given user.
   """
   def deliver_login_instructions(%User{} = user, magic_link_url_fun)
+      when is_function(magic_link_url_fun, 1) do
+    {encoded_token, user_token} = UserToken.build_email_token(user, "login")
+    Repo.insert!(user_token)
+    UserNotifier.deliver_login_instructions(user, magic_link_url_fun.(encoded_token))
+  end
 
   @doc """
   Delivers the reset password email to the given user.
 
   ## Examples
 
-      iex> deliver_user_reset_password_instructions(user, iex> deliver_user_reset_password_instructions(user, &url(~p"/users/reset-password/#{&1}"))url(~p"/users/reset-password/#{iex> deliver_user_reset_password_instructions(user, &url(~p"/users/reset-password/#{&1}"))1}"))
+      iex> deliver_user_reset_password_instructions(user, &url(~p"/users/reset-password/#{&1}"))
       {:ok, %{to: ..., body: ...}}
 
   """
@@ -335,11 +340,6 @@ defmodule SecureAuth.Accounts do
     Repo.insert!(user_token)
     UserNotifier.deliver_reset_password_instructions(user, reset_password_url_fun.(encoded_token))
   end
-  when is_function(magic_link_url_fun, 1) do
-         {encoded_token, user_token} = UserToken.build_email_token(user, "login")
-         Repo.insert!(user_token)
-         UserNotifier.deliver_login_instructions(user, magic_link_url_fun.(encoded_token))
-       end
 
   @doc """
   Deletes the signed token with the given context.
