@@ -10,22 +10,48 @@ defmodule SecureAuthWeb.Endpoint do
     signing_salt: "QrF0MhK5",
     same_site: "Lax"
   ]
+#Was the following
+  # socket "/live", Phoenix.LiveView.Socket,
+  #   websocket: [
+  #     connect_info: [session: @session_options],
+  #     check_origin: [
+  #       "https://secure-auth-lively-frost-9673.fly.dev",
+  #       "//secure-auth-lively-frost-9673.fly.dev"
+  #     ]
+  #   ],
+  #   longpoll: [
+  #     connect_info: [session: @session_options],
+  #     check_origin: [
+  #       "https://secure-auth-lively-frost-9673.fly.dev",
+  #       "//secure-auth-lively-frost-9673.fly.dev"
+  #     ]
+  #   ]
+
+
+  @dev Mix.env() == :dev
+
+  @live_check_origin (
+    if @dev do
+      false
+    else
+      [
+        "https://secure-auth-lively-frost-9673.fly.dev",
+        "//secure-auth-lively-frost-9673.fly.dev"
+      ]
+    end
+  )
 
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [
       connect_info: [session: @session_options],
-      check_origin: [
-        "https://secure-auth-lively-frost-9673.fly.dev",
-        "//secure-auth-lively-frost-9673.fly.dev"
-      ]
+      check_origin: @live_check_origin
     ],
     longpoll: [
       connect_info: [session: @session_options],
-      check_origin: [
-        "https://secure-auth-lively-frost-9673.fly.dev",
-        "//secure-auth-lively-frost-9673.fly.dev"
-      ]
+      check_origin: @live_check_origin
     ]
+
+
 
   # Serve at "/" the static files from "priv/static" directory.
   #

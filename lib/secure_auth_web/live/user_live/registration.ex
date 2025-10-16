@@ -36,10 +36,11 @@ defmodule SecureAuthWeb.UserLive.Registration do
           <.form
             for={@form}
             id="registration_form"
-            phx-submit="save"
-            phx-change="validate"
+            action={~p"/users/register"}
+            method="post"
             class="space-y-6"
           >
+            <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
             <!-- Personal Information -->
             <div class="space-y-4">
               <h3 class="text-lg font-semibold text-gray-900">Personal Information</h3>
@@ -51,7 +52,6 @@ defmodule SecureAuthWeb.UserLive.Registration do
                 placeholder="John Doe"
                 required
                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
-                phx-mounted={JS.focus()}
               />
 
               <.input
@@ -144,7 +144,7 @@ defmodule SecureAuthWeb.UserLive.Registration do
   def mount(_params, _session, socket) do
     changeset = Accounts.change_user_registration(%User{})
 
-    {:ok, assign_form(socket, changeset), temporary_assigns: [form: nil]}
+    {:ok, assign_form(socket, changeset)}
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
@@ -167,11 +167,6 @@ defmodule SecureAuthWeb.UserLive.Registration do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
-  end
-
-  def handle_event("validate", %{"user" => user_params}, socket) do
-    changeset = Accounts.change_user_registration(%User{}, user_params)
-    {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do

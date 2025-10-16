@@ -15,6 +15,15 @@ defmodule SecureAuthWeb.UserSessionController do
        ]
        when action in [:create]
 
+  def new_registration(conn, _params) do
+    if conn.assigns.current_scope do
+      redirect(conn, to: SecureAuthWeb.UserAuth.signed_in_path(conn))
+    else
+      changeset = Accounts.change_user_registration(%Accounts.User{})
+      render(conn, :new_registration, changeset: changeset)
+    end
+  end
+
   def create(conn, %{"_action" => "registered"} = params) do
     create(conn, params, "Account created successfully!")
   end
@@ -25,6 +34,29 @@ defmodule SecureAuthWeb.UserSessionController do
 
   def create(conn, params) do
     create(conn, params, "Welcome back!")
+  end
+
+  def register(conn, %{"user" => user_params}) do
+    case Accounts.register_user(user_params) do
+      {:ok, user} ->
+        {:ok, _} =
+          Accounts.deliver_login_instructions(
+            user,
+            &url(conn, ~p"/users/log-in/#{&1}")
+          )
+
+        conn
+        |> put_flash(
+          :info,
+          "Account created successfully! An email was sent to #{user.email} to confirm your account."
+        )
+        |> redirect(to: ~p"/users/log-in")
+
+      {:error, %Ecto.Changeset{} = _changeset} ->
+        conn
+        |> put_flash(:error, "There was an error creating your account. Please check the form and try again.")
+        |> redirect(to: ~p"/users/register")
+    end
   end
 
   defp create(conn, %{"user" => user_params}, _info) do

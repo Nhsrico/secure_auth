@@ -29,6 +29,42 @@ defmodule SecureAuthWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
+#Rico adding from chatgpt
+  # --- simple_form: minimal 1.7/1.8-compatible wrapper over <.form> ---
+
+  attr :for, :any, required: true
+  attr :action, :string, required: true
+  attr :class, :string, default: nil
+  attr :as, :any, default: nil
+  attr :id, :string, default: nil
+  attr :phx_change, :any, default: nil
+  attr :phx_submit, :any, default: nil
+  slot :inner_block, required: true
+  slot :actions
+
+  def simple_form(assigns) do
+    ~H"""
+    <.form
+      for={@for}
+      as={@as}
+      id={@id}
+      action={@action}
+      phx-change={@phx_change}
+      phx-submit={@phx_submit}
+      class={@class}
+    >
+      <%= render_slot(@inner_block) %>
+
+      <div :if={@actions != []} class="mt-6 flex items-center justify-end gap-x-6">
+        <%= render_slot(@actions) %>
+      </div>
+    </.form>
+    """
+  end
+
+  # keep the rest of your CoreComponents here...
+
+
 
   @doc """
   Renders flash notices.

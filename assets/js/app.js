@@ -28,7 +28,6 @@ const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
 
-/*
 //from chatgpt
 let AutofillFix = {
   mounted() {
@@ -40,7 +39,6 @@ let AutofillFix = {
   }
 };
 //End addition from chatgpt
-*/
 
 // Custom hooks for 2FA functionality
 const Hooks = {
