@@ -37,3 +37,20 @@ npm-debug.log
 
 #protect secrets etc
 config/*.secret.exs
+secure_auth_dev.db*
+cookies.txt
+# Local SQLite databases & journaling files
+*.db
+*.db-*
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.sqlite-wal
+*.sqlite-shm
+
+# Browser/curl leftovers
+cookies.txt
+
+secure_auth_test.db*
+secure_auth_dev.db*

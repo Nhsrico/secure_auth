@@ -1,15 +1,21 @@
 import Config
 
-
 config :secure_auth, SecureAuth.Repo,
-  #username: "secure_auth_dev",
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "secure_auth_dev",
+  adapter: Ecto.Adapters.SQLite3,
+  database: Path.expand("../secure_auth_dev.db", __DIR__),
+  pool_size: 5,
   stacktrace: true,
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  show_sensitive_data_on_connection_error: true
+
+# config :secure_auth, SecureAuth.Repo,
+#   #username: "secure_auth_dev",
+#   username: "postgres",
+#   password: "postgres",
+#   hostname: "localhost",
+#   database: "secure_auth_dev",
+#   stacktrace: true,
+#   show_sensitive_data_on_connection_error: true,
+#   pool_size: 10
 
 
 # # Configure your database
