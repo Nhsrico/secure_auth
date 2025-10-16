@@ -1,0 +1,32 @@
+# Set the default behavior to automatically normalize line endings
+* text=auto
+
+# Explicitly set text files to use LF line endings
+*.ex text eol=lf
+*.exs text eol=lf
+*.eex text eol=lf
+*.heex text eol=lf
+*.html text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.sh text eol=lf
+
+# Binary files (do not convert line endings)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.mp4 binary
+*.webm binary

@@ -28,8 +28,23 @@ const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
 
+/*
+//from chatgpt
+let AutofillFix = {
+  mounted() {
+    const inputs = this.el.querySelectorAll("input");
+    inputs.forEach((input) => {
+      // Trigger input event so LiveView tracks browser-filled values
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  }
+};
+//End addition from chatgpt
+*/
+
 // Custom hooks for 2FA functionality
 const Hooks = {
+  AutofillFix: AutofillFix, //Rico from chatgpt
   QRCode: {
     mounted() {
       const qrText = this.el.dataset.qrText;

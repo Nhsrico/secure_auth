@@ -25,10 +25,12 @@ defmodule SecureAuthWeb.UserLive.Login do
               for={@form}
               id="login_form"
               action={~p"/users/log-in"}
-              phx-update="ignore"
               class="space-y-6"
             >
+              <!-- run after this subtree mounts/patches -->
+              <div phx-mounted={JS.focus(to: "#login_email")} />
               <.input
+                id="login_email"
                 field={@form[:email]}
                 type="email"
                 label="Email"
@@ -65,7 +67,7 @@ defmodule SecureAuthWeb.UserLive.Login do
                 Log in
               </button>
             </.form>
-            
+
     <!-- OAuth2 Login Options -->
             <div class="mt-6">
               <div class="relative">
@@ -125,7 +127,7 @@ defmodule SecureAuthWeb.UserLive.Login do
                 </a>
               </div>
             </div>
-            
+
     <!-- Magic Link Option -->
             <div class="mt-6 text-center">
               <div class="relative">
@@ -181,9 +183,11 @@ defmodule SecureAuthWeb.UserLive.Login do
                 </div>
               </div>
             </div>
-            
+
     <!-- TOTP Code Form -->
+            <div phx-mounted={JS.focus(to: "#totp_code")} />
             <.form
+              id="totp_code"
               for={@totp_form}
               id="totp-verification-form"
               phx-submit="verify_totp"
@@ -206,7 +210,7 @@ defmodule SecureAuthWeb.UserLive.Login do
                 Verify and Log In
               </button>
             </.form>
-            
+
     <!-- Backup Code Option -->
             <div class="mt-6">
               <%= if @show_backup_form do %>
@@ -250,7 +254,7 @@ defmodule SecureAuthWeb.UserLive.Login do
                 </div>
               <% end %>
             </div>
-            
+
     <!-- Return to Login -->
             <div class="mt-6 text-center">
               <button
@@ -285,7 +289,8 @@ defmodule SecureAuthWeb.UserLive.Login do
      |> assign_form(form)
      |> assign(:magic_link_form, to_form(%{}, as: "magic_link"))
      |> assign_totp_form()
-     |> assign_backup_form(), temporary_assigns: [form: form]}
+     #|> assign_backup_form(), temporary_assigns: [form: form]}   #chatGPT recommends that this is changed to the next line
+     |> assign_backup_form()}
   end
 
   def handle_event("send_magic_link", %{"magic_link" => %{"email" => email}}, socket) do
