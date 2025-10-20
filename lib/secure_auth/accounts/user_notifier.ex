@@ -9,7 +9,7 @@ defmodule SecureAuth.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"SecureAuth", "contact@example.com"})
+      |> from({"SecureAuth", "contact@nethomesolutions.com"})
       |> subject(subject)
       |> text_body(body)
 

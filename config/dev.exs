@@ -98,5 +98,24 @@ config :phoenix_live_view,
   # Enable helpful, but potentially expensive runtime checks
   enable_expensive_runtime_checks: true
 
-# Disable swoosh api client as it is only required for production adapters.
-config :swoosh, :api_client, false
+
+
+
+# # Disable swoosh api client as it is only required for production adapters.
+# config :secure_auth, SecureAuth.Mailer,
+#   adapter: Swoosh.Adapters.Local
+
+# config :swoosh, :api_client, false
+
+
+### taking this out to let runtime.exs set the stuff up and not override it
+# # Configure SendGrid mailer for production
+# config :secure_auth, SecureAuth.Mailer,
+#   adapter: Swoosh.Adapters.Sendgrid,
+#   api_key: System.get_env("SENDGRID_API_KEY")
+
+# # Configures Swoosh API Client
+# config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: SecureAuth.Finch
+
+# # Disable Swoosh Local Memory Storage
+# config :swoosh, local: false

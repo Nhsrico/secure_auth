@@ -47,6 +47,7 @@ defmodule SecureAuth.Accounts.User do
     field :backup_codes, {:array, :string}, virtual: true, redact: true
     field :totp_code, :string, virtual: true, redact: true
 
+    field :is_admin, :boolean, default: false
     timestamps(type: :utc_datetime)
   end
 

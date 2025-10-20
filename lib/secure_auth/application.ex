@@ -10,7 +10,7 @@ defmodule SecureAuth.Application do
     children = [
       SecureAuthWeb.Telemetry,
       SecureAuth.RateLimiter,
-      {Finch, name: SecureAuth.Finch},
+      {Finch, name: MyFinch},
       SecureAuth.Repo,
       {Ecto.Migrator,
        repos: Application.fetch_env!(:secure_auth, :ecto_repos), skip: skip_migrations?()},

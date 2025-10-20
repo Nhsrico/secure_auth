@@ -24,13 +24,15 @@
       </div>
     </div>
 
-    <.simple_form for={@changeset} action={~p"/users/register"} class="space-y-6">
+    <% form = to_form(@changeset) %>
+
+    <.simple_form for={form} action={~p"/users/register"} class="space-y-6">
       <!-- Personal Information -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold text-gray-900">Personal Information</h3>
 
         <.input
-          field={@changeset[:name]}
+          field={form[:name]}
           type="text"
           label="Full Name"
           placeholder="John Doe"
@@ -39,7 +41,7 @@
         />
 
         <.input
-          field={@changeset[:email]}
+          field={form[:email]}
           type="email"
           label="Email Address"
           placeholder="you@example.com"
@@ -49,7 +51,7 @@
         />
 
         <.input
-          field={@changeset[:phone_number]}
+          field={form[:phone_number]}
           type="tel"
           label="Phone Number (for 2FA)"
           placeholder="+1234567890"
@@ -58,7 +60,7 @@
         />
 
         <.input
-          field={@changeset[:password]}
+          field={form[:password]}
           type="password"
           label="Password (minimum 12 characters)"
           placeholder="••••••••••••"
@@ -73,7 +75,7 @@
         <p class="text-sm text-gray-600">Provide either SSN or passport number (not both)</p>
 
         <.input
-          field={@changeset[:ssn]}
+          field={form[:ssn]}
           type="text"
           label="Social Security Number (XXX-XX-XXXX)"
           placeholder="123-45-6789"
@@ -83,7 +85,7 @@
         <div class="text-center text-gray-500 font-medium">OR</div>
 
         <.input
-          field={@changeset[:passport_number]}
+          field={form[:passport_number]}
           type="text"
           label="Passport Number"
           placeholder="A12345678"
@@ -91,7 +93,7 @@
         />
 
         <.input
-          field={@changeset[:next_of_kin_passport]}
+          field={form[:next_of_kin_passport]}
           type="text"
           label="Next of Kin Passport Number"
           placeholder="B87654321"

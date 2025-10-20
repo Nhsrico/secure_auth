@@ -1,0 +1,43 @@
+<h3 class="text-lg font-semibold mt-6">Active API Keys</h3>
+<table class="min-w-full text-sm">
+  <thead><tr><th class="text-left">Label</th><th>Token</th><th>Scopes</th><th>Last used</th><th>Status</th></tr></thead>
+  <tbody>
+  <%= for k <- @api_keys_view do %>
+    <tr>
+      <td><%= k.label %></td>
+      <td><%= k.token %></td>
+      <td><%= k.scopes %></td>
+      <td class="text-center"><%= k.last_used %></td>
+      <td class="text-center"><%= k.status %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<h3 class="text-lg font-semibold mt-6">Rate-limited IPs</h3>
+<table class="min-w-full text-sm">
+  <thead><tr><th class="text-left">IP</th><th class="text-center">Hits</th><th class="text-center">Resets</th></tr></thead>
+  <tbody>
+  <%= for r <- @rate_limits_view do %>
+    <tr>
+      <td><%= r.ip %></td>
+      <td class="text-center"><%= r.hits %></td>
+      <td class="text-center"><%= r.resets %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<h3 class="text-lg font-semibold mt-6">Recent Login Attempts</h3>
+<table class="min-w-full text-sm">
+  <thead><tr><th>When</th><th>IP</th><th>Result</th></tr></thead>
+  <tbody>
+  <%= for a <- @login_attempts_view do %>
+    <tr>
+      <td><%= a.when %></td>
+      <td><%= a.ip %></td>
+      <td><%= a.result %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

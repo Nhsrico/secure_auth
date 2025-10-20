@@ -25,6 +25,9 @@ config :secure_auth, SecureAuthWeb.Endpoint,
 config :secure_auth, SecureAuth.Mailer, adapter: Swoosh.Adapters.Test
 
 # Disable swoosh api client as it is only required for production adapters
+config :secure_auth, SecureAuth.Mailer,
+  adapter: Swoosh.Adapters.Test
+
 config :swoosh, :api_client, false
 
 # Print only warnings and errors during test
