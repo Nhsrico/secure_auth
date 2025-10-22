@@ -704,7 +704,7 @@ end
 
         {:noreply,
          socket
-         |> put_flash(:info, "User #{user.email}> has been verified.")
+         |> put_flash(:info, "User #{user.email} has been verified.")
          |> load_users()}
 
       _changeset ->
@@ -715,35 +715,56 @@ end
   def handle_event("suspend_user", %{"user-id" => user_id}, socket) do
     user = Accounts.get_user!(user_id)
 
-    case Accounts.change_user_registration(user, %{verification_status: "suspended"}) do
-      %{valid?: true} = changeset ->
-        {:ok, _user} = Repo.update(changeset)
+    case Accounts.update_user_status(user, %{verification_status: "suspended"}) do
+      {:ok, _} ->
+        {:noreply, socket |> put_flash(:info, "User #{user.email} has been suspended.") |> load_users()}
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "User #{user.email}> has been suspended.")
-         |> load_users()}
-
-      _changeset ->
+      {:error, cs} ->
+        IO.inspect(cs.errors, label: "suspend errors")
         {:noreply, put_flash(socket, :error, "Failed to suspend user.")}
     end
+
+    # case Accounts.change_user_registration(user, %{verification_status: "suspended"}) do
+    #   %{valid?: true} = changeset ->
+    #     {:ok, _user} = Repo.update(changeset)
+
+    #     {:noreply,
+    #      socket
+    #      |> put_flash(:info, "User #{user.email} has been suspended.")
+    #      |> load_users()}
+
+    #   changeset ->
+    #     IO.inspect(changeset.errors, label: "suspend errors")
+    #     {:noreply, put_flash(socket, :error, "Failed to suspend user.")}
+    # end
   end
 
   def handle_event("activate_user", %{"user-id" => user_id}, socket) do
     user = Accounts.get_user!(user_id)
 
-    case Accounts.change_user_registration(user, %{verification_status: "verified"}) do
-      %{valid?: true} = changeset ->
-        {:ok, _user} = Repo.update(changeset)
+      case Accounts.update_user_status(user, %{verification_status: "verified"}) do
+      {:ok, _} ->
+        {:noreply, socket |> put_flash(:info, "User #{user.email} has been verified.") |> load_users()}
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "User #{user.email}> has been activated.")
-         |> load_users()}
-
-      _changeset ->
-        {:noreply, put_flash(socket, :error, "Failed to activate user.")}
+      {:error, cs} ->
+        IO.inspect(cs.errors, label: "verified errors")
+        {:noreply, put_flash(socket, :error, "Failed to verify user.")}
     end
+
+
+
+    # case Accounts.change_user_registration(user, %{verification_status: "verified"}) do
+    #   %{valid?: true} = changeset ->
+    #     {:ok, _user} = Repo.update(changeset)
+
+    #     {:noreply,
+    #      socket
+    #      |> put_flash(:info, "User #{user.email} has been activated.")
+    #      |> load_users()}
+
+    #   _changeset ->
+    #     {:noreply, put_flash(socket, :error, "Failed to activate user.")}
+    # end
   end
 
   def handle_event("delete_user", %{"user-id" => user_id}, socket) do

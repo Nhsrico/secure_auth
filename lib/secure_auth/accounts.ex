@@ -39,6 +39,18 @@ defmodule SecureAuth.Accounts do
       nil
 
   """
+
+  # def get_user_by_email_and_password(email, password)
+  #     when is_binary(email) and is_binary(password) do
+  #   case Repo.get_by(User, email: email) do
+  #     %User{verification_status: "suspended"} -> nil
+  #     %User{} = user ->
+  #       if User.valid_password?(user, password), do: user
+  #     _ -> nil
+  #   end
+  # end
+
+
   def get_user_by_email_and_password(email, password)
       when is_binary(email) and is_binary(password) do
     user = Repo.get_by(User, email: email)
@@ -288,6 +300,9 @@ defmodule SecureAuth.Accounts do
     {:ok, query} = UserToken.verify_magic_link_token_query(token)
 
     case Repo.one(query) do
+      {%User{verification_status: "suspended"}, _token} ->
+        {:error, :suspended}
+
       # Prevent session fixation attacks by disallowing magic links for unconfirmed users with password
       {%User{confirmed_at: nil, hashed_password: hash}, _token} when not is_nil(hash) ->
         raise """
@@ -445,4 +460,11 @@ defmodule SecureAuth.Accounts do
       {:ok, user, expired_tokens}
     end
   end
+
+def change_user_status(user, attrs), do: User.status_changeset(user, attrs)
+def update_user_status(user, attrs), do: user |> User.status_changeset(attrs) |> Repo.update()
+
+def may_login?(%User{verification_status: "suspended"}), do: false
+def may_login?(_), do: true
+
 end

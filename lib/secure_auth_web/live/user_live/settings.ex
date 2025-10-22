@@ -45,7 +45,7 @@ defmodule SecureAuthWeb.UserLive.Settings do
               </button>
             </.form>
           </div>
-          
+
     <!-- Email Form -->
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Email Address</h3>
@@ -77,57 +77,63 @@ defmodule SecureAuthWeb.UserLive.Settings do
               </button>
             </.form>
           </div>
-          
-    <!-- Password Form -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Password</h3>
-            <p class="text-sm text-gray-600 mb-4">
-              Update your password. Choose a strong password to keep your account secure.
-            </p>
 
-            <.form
-              for={@password_form}
-              id="password_form"
-              action={~p"/users/update-password"}
-              method="post"
-              phx-change="validate_password"
-              phx-submit="update_password"
-              phx-trigger-action={@trigger_submit}
-              class="space-y-4"
-            >
-              <input
-                name={@password_form[:email].name}
-                type="hidden"
-                id="hidden_user_email"
-                autocomplete="username"
-                value={@current_email}
-              />
-              <.input
-                field={@password_form[:password]}
-                type="password"
-                label="New Password"
-                autocomplete="new-password"
-                required
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
-              />
-              <.input
-                field={@password_form[:password_confirmation]}
-                type="password"
-                label="Confirm New Password"
-                autocomplete="new-password"
-                required
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
-              />
-              <button
-                type="submit"
-                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-                phx-disable-with="Saving..."
-              >
-                Save Password
-              </button>
-            </.form>
-          </div>
-          
+<!-- Password Form -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+  <h3 class="text-lg font-semibold text-gray-900 mb-4">Password</h3>
+  <p class="text-sm text-gray-600 mb-4">
+    Update your password. Choose a strong password to keep your account secure.
+  </p>
+
+  <.form
+    for={@password_form}
+    id="password_form"
+    action={~p"/users/update-password"}
+    method="post"
+    phx-change="validate_password"
+    phx-submit="update_password"
+    phx-trigger-action={@trigger_submit}
+    class="space-y-4"
+  >
+    <!-- TOP-LEVEL current password (required by controller) -->
+    <label class="block text-sm font-medium text-gray-700">Current Password</label>
+    <input
+      type="password"
+      name="current_password"
+      autocomplete="current-password"
+      required
+      class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+    />
+
+    <!-- New password goes under user[...] -->
+    <.input
+      field={@password_form[:password]}
+      type="password"
+      label="New Password"
+      autocomplete="new-password"
+      required
+      class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+    />
+
+    <.input
+      field={@password_form[:password_confirmation]}
+      type="password"
+      label="Confirm New Password"
+      autocomplete="new-password"
+      required
+      class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+    />
+
+    <button
+      type="submit"
+      class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+      phx-disable-with="Saving..."
+    >
+      Save Password
+    </button>
+  </.form>
+</div>
+
     <!-- Two-Factor Authentication Status -->
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div class="flex items-center justify-between">
@@ -160,7 +166,7 @@ defmodule SecureAuthWeb.UserLive.Settings do
               </div>
             </div>
           </div>
-          
+
     <!-- API Keys Link -->
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div class="flex items-center justify-between">
@@ -288,17 +294,64 @@ defmodule SecureAuthWeb.UserLive.Settings do
     {:noreply, assign(socket, password_form: password_form)}
   end
 
-  def handle_event("update_password", params, socket) do
-    %{"user" => user_params} = params
-    user = socket.assigns.current_scope.user
-    true = Accounts.sudo_mode?(user)
 
-    case Accounts.change_user_password(user, user_params) do
-      %{valid?: true} = changeset ->
-        {:noreply, assign(socket, trigger_submit: true, password_form: to_form(changeset))}
 
-      changeset ->
-        {:noreply, assign(socket, password_form: to_form(changeset, action: :insert))}
+
+
+
+
+  # from chatGPT
+
+@impl true
+def handle_event("update_password", %{"current_password" => current, "user" => user_params}, socket) do
+  user = socket.assigns.current_scope.user
+
+  # 1) verify current password (nil-safe)
+  current_ok? =
+    case SecureAuth.Accounts.get_user_by_email_and_password(user.email, current) do
+      %SecureAuth.Accounts.User{} -> true
+      _ -> false
+    end
+
+  if !current_ok? do
+    # attach a nice error to :current_password and re-render the form
+    cs =
+      SecureAuth.Accounts.change_user_password(user, user_params)
+      |> Ecto.Changeset.add_error(:current_password, "is not valid")
+
+    {:noreply, assign(socket, password_form: to_form(%{cs | action: :insert}))}
+  else
+    # 2) apply new password via Accounts.update_user_password/2
+    case SecureAuth.Accounts.update_user_password(user, user_params) do
+      {:ok, _user, _expired_tokens} ->
+        # tokens are already expired by Accounts; show success & reset the form
+        empty = SecureAuth.Accounts.change_user_password(user, %{})
+        {:noreply,
+         socket
+         |> put_flash(:info, "Password updated successfully.")
+         |> assign(password_form: to_form(empty), trigger_submit: false)}
+
+      {:error, cs} ->
+        # show validation errors (length, confirmation, etc.)
+        {:noreply, assign(socket, password_form: to_form(%{cs | action: :insert}))}
     end
   end
+end
+
+
+
+  #was
+  # def handle_event("update_password", params, socket) do
+  #   %{"user" => user_params} = params
+  #   user = socket.assigns.current_scope.user
+  #   true = Accounts.sudo_mode?(user)
+
+  #   case Accounts.change_user_password(user, user_params) do
+  #     %{valid?: true} = changeset ->
+  #       {:noreply, assign(socket, trigger_submit: true, password_form: to_form(changeset))}
+
+  #     changeset ->
+  #       {:noreply, assign(socket, password_form: to_form(changeset, action: :insert))}
+  #   end
+  # end
 end

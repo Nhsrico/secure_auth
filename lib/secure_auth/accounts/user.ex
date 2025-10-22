@@ -311,4 +311,12 @@ defmodule SecureAuth.Accounts.User do
       changeset
     end
   end
+
+   @statuses ~w(pending verified suspended)
+  def status_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:verification_status])
+    |> validate_inclusion(:verification_status, @statuses)
+  end
+
 end

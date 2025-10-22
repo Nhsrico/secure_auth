@@ -6,6 +6,7 @@ defmodule SecureAuthWeb.UserSessionController do
 
   alias SecureAuth.Accounts
   alias SecureAuthWeb.UserAuth
+  alias SecureAuth.Accounts.User
 
   plug RateLimitPlug,
        [
@@ -23,6 +24,37 @@ defmodule SecureAuthWeb.UserSessionController do
       render(conn, :new_registration, changeset: changeset)
     end
   end
+
+    # -- put THIS clause first so it wins over the catch-all its a 2 arity--
+    #  Magic-link / confirmed token post
+  def create(conn, %{
+        "_action" => "confirmed",
+        "user" => %{"token" => token} = attrs
+      }) do
+    remember_me =
+      case Map.get(attrs, "remember_me") do
+        v when v in ["true", "on", true] -> "true"
+        _ -> "false"
+      end
+
+    case Accounts.login_user_by_magic_link(token) do
+      {:ok, %User{} = user, _expired_tokens} ->
+        conn
+        |> UserAuth.log_in_user(user, %{"remember_me" => remember_me})
+
+      {:error, :suspended} ->
+        conn
+        |> put_flash(:error, "Your account is suspended.")
+        |> redirect(to: ~p"/users/log-in")
+
+      _ ->
+        conn
+        |> put_flash(:error, "That link is invalid or has expired.")
+        |> redirect(to: ~p"/users/log-in")
+    end
+  end
+
+
 
   def create(conn, %{"_action" => "registered"} = params) do
     create(conn, params, "Account created successfully!")
@@ -59,25 +91,62 @@ defmodule SecureAuthWeb.UserSessionController do
     end
   end
 
+
+
+  # # 1) Magic-link / confirmed token post
+  # def create(conn, %{
+  #       "_action" => "confirmed",
+  #       "user" => %{"token" => token} = attrs
+  #     }) do
+  #   remember_me =
+  #     case Map.get(attrs, "remember_me") do
+  #       v when v in ["true", "on", true] -> "true"
+  #       _ -> "false"
+  #     end
+
+  #   case Accounts.login_user_by_magic_link(token) do
+  #     {:ok, %User{} = user, _expired_tokens} ->
+  #       conn
+  #       |> UserAuth.log_in_user(user, %{"remember_me" => remember_me})
+
+  #     {:error, :suspended} ->
+  #       conn
+  #       |> put_flash(:error, "Your account is suspended.")
+  #       |> redirect(to: ~p"/users/log-in")
+
+  #     _ ->
+  #       conn
+  #       |> put_flash(:error, "That link is invalid or has expired.")
+  #       |> redirect(to: ~p"/users/log-in")
+  #   end
+  # end
+
   defp create(conn, %{"user" => user_params}, _info) do
     %{"email" => email, "password" => password} = user_params
 
     if user = Accounts.get_user_by_email_and_password(email, password) do
-      # Reset rate limit on successful login
-      reset_login_rate_limit(conn)
+      if Accounts.may_login?(user) do
+        # Reset rate limit on successful login
+        reset_login_rate_limit(conn)
 
-      # Check if user has 2FA enabled
-      if user.two_factor_enabled do
-        # Store user in session temporarily and redirect to 2FA verification
-        conn
-        |> put_session(:pending_user_id, user.id)
-        |> put_session(:remember_me, Map.get(user_params, "remember_me", "false"))
-        |> put_flash(:info, "Please complete two-factor authentication")
-        |> redirect(to: ~p"/users/verify-2fa")
+        # Check if user has 2FA enabled
+        if user.two_factor_enabled do
+          # Store user in session temporarily and redirect to 2FA verification
+          conn
+          |> put_session(:pending_user_id, user.id)
+          |> put_session(:remember_me, Map.get(user_params, "remember_me", "false"))
+          |> put_flash(:info, "Please complete two-factor authentication")
+          |> redirect(to: ~p"/users/verify-2fa")
+        else
+          # Normal login flow without 2FA
+          UserAuth.log_in_user(conn, user, user_params)
+        end
       else
-        # Normal login flow without 2FA
-        UserAuth.log_in_user(conn, user, user_params)
+        conn
+        |> put_flash(:error, "Your account is suspended.")
+        |> redirect(to: ~p"/users/log-in")
       end
+
     else
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
       conn

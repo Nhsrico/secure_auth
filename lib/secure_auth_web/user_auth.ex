@@ -5,7 +5,7 @@ defmodule SecureAuthWeb.UserAuth do
   import Phoenix.Controller
 
   alias SecureAuth.Accounts
-  alias SecureAuth.Accounts.Scope
+  alias SecureAuth.Accounts.{User, Scope}
 
   # Make the remember me cookie valid for 14 days. This should match
   # the session validity setting in UserToken.
@@ -59,19 +59,42 @@ defmodule SecureAuthWeb.UserAuth do
     |> redirect(to: ~p"/dashboard")
   end
 
-  @doc """
-  Authenticates the user by looking into the session and remember me token.
+@doc """
+Authenticates the user by looking into the session and remember-me token.
 
-  Will reissue the session token if it is older than the configured age.
-  """
+Always assigns :current_scope (nil or %Scope{}).
+Reissues the session token if it is older than the configured age.
+If the user is suspended, drops the session and redirects to log in.
+"""
   def fetch_current_scope_for_user(conn, _opts) do
-    with {token, conn} <- ensure_user_token(conn),
-         {user, token_inserted_at} <- Accounts.get_user_by_session_token(token) do
-      conn
-      |> assign(:current_scope, Scope.for_user(user))
-      |> maybe_reissue_user_session_token(user, token_inserted_at)
-    else
-      nil -> assign(conn, :current_scope, Scope.for_user(nil))
+    # 1) Build/refresh scope
+    conn =
+      with {token, conn1} <- ensure_user_token(conn),
+          {user, token_inserted_at} <- Accounts.get_user_by_session_token(token) do
+        conn1
+        |> assign(:current_scope, Scope.for_user(user))
+        |> maybe_reissue_user_session_token(user, token_inserted_at)
+      else
+        _ ->
+          # On any failure, ensure we still assign a scope (nil user)
+          assign(conn, :current_scope, Scope.for_user(nil))
+      end
+
+    # 2) Optional: eject suspended users (do this AFTER assigning)
+    case conn.assigns[:current_scope] do
+      %Scope{user: %User{verification_status: "suspended"}} ->
+        if token = get_session(conn, :user_token) do
+          Accounts.delete_user_session_token(token)
+        end
+
+        conn
+        |> configure_session(drop: true)
+        |> put_flash(:error, "Your account is suspended.")
+        |> redirect(to: ~p"/users/log-in")
+        |> halt()
+
+      _ ->
+        conn
     end
   end
 

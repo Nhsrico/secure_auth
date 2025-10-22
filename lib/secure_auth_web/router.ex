@@ -10,8 +10,11 @@ defmodule SecureAuthWeb.Router do
     plug :put_root_layout, html: {SecureAuthWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    # plug SecureAuthWeb.UserAuth, :fetch_current_scope_for_user #was
     plug :fetch_current_scope_for_user
   end
+
+
 
   pipeline :api do
     plug :accepts, ["json"]
